@@ -1,0 +1,11 @@
+Estados no terminales:
+Vn = {} 
+
+Estados Terminales:
+Vt = {}
+
+Simbolo distinguido:
+S = S
+
+Producciones:
+
