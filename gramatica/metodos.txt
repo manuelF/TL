@@ -1,0 +1,14 @@
+Estos barse como objetos con sus propios métodos.
+{ ... }.play( s ) : Reproduce el bonido a velocidad s.
+{ ... }.post : Imprime el contenido del b  salida estándar.
+(Solo útil para buscar errores)
+{ ... }.loop( t ) : Replica el contenido del bes.
+(e.g. {1,2}.loop(2) = {1,2,1,2} )
+{ ... }.tune( [+/-] n ) : Modica el bemitonos.
+{ ... }.ll( n ) : Aumenta o reduce el tamaño del bcuerdo a la
+calidad del sonido predeterminada.
+{ ... }.reduce : Reduce el contenido del bcuerdo a la calidad del
+sonido predeterminada.
+{ ... }.expand : Aumenta el contenido del bcuerdo a la calidad
+del sonido predeterminada.
+

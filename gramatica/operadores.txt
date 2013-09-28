@@ -1,0 +1,40 @@
+descripción
+concatenación
+mezcla
+suma
+resta
+producto
+división
+
+símbolo
+;
+&
++
+-
+*
+/
+
+nombre
+con
+mix
+add
+sub
+mul
+div
+
+ejemplo
+{a; b} ; {x; y}
+{ a; b} & {x; y}
+{ a; b} + {x; y}
+{ a; b} - {x; y}
+{ a; b} * {x; y}
+{ a; b} / {x; y}
+
+resultado
+{a; b; x; y }
+{ (a+x)/2; (b+y)/2 }
+{ a+x; b+y }
+{ a-x; b-y }
+{ a*x; b*y }
+{ a/x; b/y }
+

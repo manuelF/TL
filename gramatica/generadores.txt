@@ -1,0 +1,8 @@
+sin( f, a ) : Genera una onda sinusoidal de f ciclos con amplitud a.
+lin( a, b ), linear( a, b ) : Genera una onda lineal que comienza con el valor
+a y termina con el valor b.
+sil(), silence() : Genera silencio.
+noi( a ), noise( a ) : Generan ruido blanco con amplitud a.
+v1 ; v2 ; v3 ; ... : Permite escribir bsmente.
+(e.g. { 1; 2; 3; 4 }, { -1.0; +1.0 }, etc.)
+
