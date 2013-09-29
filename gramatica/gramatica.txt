@@ -1,11 +1,41 @@
-Estados no terminales:
-Vn = {} 
+Simbolos no terminales:
+Vn = {L, op, E, funcion, num, sign, digits, digs, M} 
 
-Estados Terminales:
-Vt = {}
+Simbolos Terminales:
+Vt = {0123456789 &;+.-*/ expand reduce post loop fill tune play sin lin linear sil silence noi noise}
 
 Simbolo distinguido:
 S = S
 
 Producciones:
+
+
+S -> { F } | { F }.M 
+
+L -> #lista
+L -> E | E; | E; L | { L } | { L } op { L } | { L } op e
+
+op -> & | ; | + | - | * | /
+
+E -> numero | funcion
+
+funcion -> sin(num,num) | lin (num, num) | linear(num,num) | sil() | silence() | noi (num)  | noise(num)
+
+num -> sign digits | digits
+
+sign -> + | - 
+
+digits -> digs.digs| digs.0 | 0.digs
+
+
+digs -      1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 
+        0 digs | 1 digs  | 2 digs  | 3 digs  | 4 digs  | 5 digs  | 6 digs  | 7 digs  | 8 digs  | 9 digs | 
+
+M -> #metodo
+
+M -> expand | reduce | post | .Mpunto | .Mpunto M
+
+Mpunto -> loop(num) | fill(num) | tune( SIGN num) | play(num)
+
+
 
