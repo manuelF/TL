@@ -9,33 +9,41 @@ S = S
 
 Producciones:
 
+#Del simbolo inicial de una lista, o tiene una lista solamente, o tiene ademas metodos
+S -> L | L .M 
 
-S -> { F } | { F }.M 
-
+#La lista de cosas pueden ser elementos, o elementos separados, o sublistas, o operaciones a sublistas
 L -> #lista
-L -> E | E; | E; L | { L } | { L } op { L } | { L } op e
+L -> E | E; | E; L | { L } | { L } op { L } | { L } op E
 
+#Las operaciones pueden ser invocadas con los simbolos o con los nombres completos
 op -> & | ; | + | - | * | /
+op -> mix | con | add | sub | mul | div
 
+#Los elementos pueden ser o numeros o objetos devueltos por funciones
 E -> numero | funcion
 
+#Las funciones segun definidas en pagina 2, devuelven objetos
 funcion -> sin(num,num) | lin (num, num) | linear(num,num) | sil() | silence() | noi (num)  | noise(num)
 
+#Los numeros pueden tener o no el signo
 num -> sign digits | digits
 
+#Si tienen signos, son + y -
 sign -> + | - 
 
-digits -> digs.digs| digs.0 | 0.digs
+#Si tienen digitos, pueden tener o no ceros o decimales
+digits -> digs.digs| digs.0 | 0.digs | digs
 
-
+#Numeros no pueden comenzar en cero
 digs -      1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 
         0 digs | 1 digs  | 2 digs  | 3 digs  | 4 digs  | 5 digs  | 6 digs  | 7 digs  | 8 digs  | 9 digs | 
 
-M -> #metodo
-
+#Los metodos de alteracion pueden tener parametros o no, y pueden ser encadenados
 M -> expand | reduce | post | .Mpunto | .Mpunto M
 
-Mpunto -> loop(num) | fill(num) | tune( SIGN num) | play(num)
+#Los metodos que toman parametros son estos
+Mpunto -> loop( digs ) | fill( digs ) | tune( sign digs ) | play(digs)
 
 
 
