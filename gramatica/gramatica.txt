@@ -17,9 +17,7 @@ Reglas del Lexer:
         num -> (+|-| ) digitos [.digitos | ] 
         digitos -> [ [1..9][0..9]* | 0]
     
-    #Reduccion del whitespace
-    #Eliminacion de los comentarios
-    
+    #Reduccion del whitespace y Eliminacion de los comentarios    
     E -> [//\w*\n | \s | \n]*
 
 Producciones:
@@ -30,8 +28,8 @@ Producciones:
 S -> L | L .M 
 
 #La lista de cosas pueden ser elementos, o elementos separados, o sublistas, o operaciones a sublistas
-L -> #lista
-L -> E | E; | E; L | { L } | { L } op { L } | { L } op E
+#L -> #lista
+L -> E | E; L | { L } | { L } op { L } | { L } op E
 
 #Las operaciones pueden ser invocadas con los simbolos o con los nombres completos
 op -> & | ; | + | - | * | /
@@ -49,10 +47,10 @@ funcion -> 		  sin(num[,num | ])
 
 
 #Los metodos de alteracion pueden tener parametros o no, y pueden ser encadenados
-M -> expand | reduce | post | .Mpunto | .Mpunto M
+M -> expand | reduce | post | .M | .Mpunto 
 
 #Los metodos que toman parametros son estos
-Mpunto -> loop( digs ) | fill( digs ) | tune( sign digs ) | play(digs)
+Mpunto -> loop( num ) | fill( num ) | tune( num ) | play(num) | 
 
 
 
