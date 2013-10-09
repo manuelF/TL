@@ -7,7 +7,24 @@ Vt = {0123456789 &;+.-*/ expand reduce post loop fill tune play sin lin linear s
 Simbolo distinguido:
 S = S
 
+Presuponemos sobre el Lexer:
+    -  Nos reemplaza las numeros por el token numeros usando la expresion
+        regular definida en la regla 'num'
+    -  Nos elimina todo caracteres que sigue el // hasta el \n, incluyendo las //
+
+Reglas del Lexer:
+    #Los numeros los definimos con expresiones regulares
+        num -> (+|-| ) digitos [.digitos | ] 
+        digitos -> [ [1..9][0..9]* | 0]
+    
+    #Reduccion del whitespace
+    #Eliminacion de los comentarios
+    
+    E -> [//\w*\n | \s | \n]*
+
 Producciones:
+
+
 
 #Del simbolo inicial de una lista, o tiene una lista solamente, o tiene ademas metodos
 S -> L | L .M 
@@ -24,20 +41,12 @@ op -> mix | con | add | sub | mul | div
 E -> numero | funcion
 
 #Las funciones segun definidas en pagina 2, devuelven objetos
-funcion -> sin(num,num) | lin (num, num) | linear(num,num) | sil() | silence() | noi (num)  | noise(num)
+funcion -> 		  sin(num[,num | ]) 						
+				| [lin|linear](num[, num| ]) 
+				| [sil|silence][() | ]
+				| [noi|noise][(num) | ]
 
-#Los numeros pueden tener o no el signo
-num -> sign digits | digits
 
-#Si tienen signos, son + y -
-sign -> + | - 
-
-#Si tienen digitos, pueden tener o no ceros o decimales
-digits -> digs.digs| digs.0 | 0.digs | digs
-
-#Numeros no pueden comenzar en cero
-digs -      1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 
-        0 digs | 1 digs  | 2 digs  | 3 digs  | 4 digs  | 5 digs  | 6 digs  | 7 digs  | 8 digs  | 9 digs | 
 
 #Los metodos de alteracion pueden tener parametros o no, y pueden ser encadenados
 M -> expand | reduce | post | .Mpunto | .Mpunto M
