@@ -9,14 +9,22 @@ S = S
 
 Presuponemos sobre el Lexer:
     -  Nos reemplaza las numeros por el token numeros usando la expresion
-        regular definida en la regla 'num'
+        regular definida en la regla 'num'.
+    -  Nos reemplaza las funciones por sus tokens correspondientes.
     -  Nos elimina todo caracteres que sigue el // hasta el \n, incluyendo las //
 
 Reglas del Lexer:
     #Los numeros los definimos con expresiones regulares
-        num -> (+|-| ) digitos [.digitos | ] 
-        digitos -> [ [1..9][0..9]* | 0]
+        num -> (+|-| ) [[1..9][0..9]* | 0 ][.[0..9]*[1..9] | .0 | ] 
+
+
+    #Las funciones definidas con expresiones regulares:
+	sin -> sin 						
+	lin -> [lin|linear]
+	sil -> [sil|silence]
+	noi -> [noi|noise]
     
+
     #Reduccion del whitespace y Eliminacion de los comentarios    
     E -> [//\w*\n | \s | \n]*
 
@@ -25,11 +33,14 @@ Producciones:
 
 
 #Del simbolo inicial de una lista, o tiene una lista solamente, o tiene ademas metodos
-S -> L | L .M 
+S -> A ($????) 
 
-#La lista de cosas pueden ser elementos, o elementos separados, o sublistas, o operaciones a sublistas
-#L -> #lista
-L -> E | E; L | { L } | { L } op { L } | { L } op E
+#Aplicacion de una funcion a un buffer
+A -> {B}N
+
+#Buffer, puede ser desde un elemento a buffers aplicados entre si dentro de un espacio delimitado por corchetes
+B -> ENR | {B}
+R -> lambda | op B 
 
 #Las operaciones pueden ser invocadas con los simbolos o con los nombres completos
 op -> & | ; | + | - | * | /
@@ -39,18 +50,16 @@ op -> mix | con | add | sub | mul | div
 E -> numero | funcion
 
 #Las funciones segun definidas en pagina 2, devuelven objetos
-funcion -> 		  sin(num[,num | ]) 						
-				| [lin|linear](num[, num| ]) 
-				| [sil|silence][() | ]
-				| [noi|noise][(num) | ]
-
+funcion ->  FH
+F -> sin | lin | sil | noi 
+H -> lambda | ( num G
+G -> ,num) | )
 
 
 #Los metodos de alteracion pueden tener parametros o no, y pueden ser encadenados
-M -> expand | reduce | post | .M | .Mpunto 
-
-#Los metodos que toman parametros son estos
-Mpunto -> loop( num ) | fill( num ) | tune( num ) | play(num) | 
+M -> expandN | reduceN | postN | playPN | loop( num )N | fill( num )N | tune( num )N
+P -> lambda | ( num ) 
+N -> lambda | .M
 
 
 
