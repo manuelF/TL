@@ -23,43 +23,44 @@ Reglas del Lexer:
 	lin -> [lin|linear]
 	sil -> [sil|silence]
 	noi -> [noi|noise]
+
+    #Los operandos definidos con expresiones regulares:
+	mix -> & | mix
+	con -> ; | con
+	add -> + | add 
+	sub -> - | sub
+	mul -> * | mul
+	div -> / | div
     
 
     #Reduccion del whitespace y Eliminacion de los comentarios    
     E -> [//\w*\n | \s | \n]*
 
+
 Producciones:
 
-
-
-#Del simbolo inicial de una lista, o tiene una lista solamente, o tiene ademas metodos
-S -> A ($????) 
-
-#Aplicacion de una funcion a un buffer
-A -> {B}N
-
-#Buffer, puede ser desde un elemento a buffers aplicados entre si dentro de un espacio delimitado por corchetes
-B -> ENR | {B}
+#Del simbolo inicial a una lista de lista generadores con aplicaciones o generadores con aplicaciones unidos por operandos.
+S -> {S}N | GNR
 R -> lambda | op B 
 
 #Las operaciones pueden ser invocadas con los simbolos o con los nombres completos
-op -> & | ; | + | - | * | /
 op -> mix | con | add | sub | mul | div
 
-#Los elementos pueden ser o numeros o objetos devueltos por funciones
-E -> numero | funcion
+#Los generadores pueden ser o numeros u objetos devueltos por funciones
+G -> numero | funcion
 
 #Las funciones segun definidas en pagina 2, devuelven objetos
 funcion ->  FH
 F -> sin | lin | sil | noi 
-H -> lambda | ( num G
-G -> ,num) | )
+H -> lambda | ( num I
+I -> ,num) | )
 
 
 #Los metodos de alteracion pueden tener parametros o no, y pueden ser encadenados
-M -> expandN | reduceN | postN | playPN | loop( num )N | fill( num )N | tune( num )N
+N -> lambda | .MN
+M -> expand | reduce | post | play P | loop( num ) | fill( num ) | tune( num )
 P -> lambda | ( num ) 
-N -> lambda | .M
+
 
 
 
