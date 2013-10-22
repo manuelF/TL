@@ -2,7 +2,7 @@ Simbolos no terminales:
 Vn = {L, op, E, funcion, num, sign, digits, digs, M} 
 
 Simbolos Terminales:
-Vt = {0123456789 &;+.-*/ expand reduce post loop fill tune play sin lin linear sil silence noi noise}
+Vt = {0123456789 &;+.-*/ expand reduce post loop fill tune play sin lin sil noi mix con add sub mul div}
 
 Simbolo distinguido:
 S = S
