@@ -1,8 +1,8 @@
 Simbolos no terminales:
-Vn = {L, op, E, funcion, num, sign, digits, digs, M} 
+Vn ={ S R op G F H I N M P funcion }
 
 Simbolos Terminales:
-Vt = {0123456789 &;+.-*/ expand reduce post loop fill tune play sin lin sil noi mix con add sub mul div}
+Vt = { , '{' '}' '(' ')' num expand reduce post loop fill tune play sin lin sil noi mix con add sub mul div}
 
 Simbolo distinguido:
 S = S
@@ -60,7 +60,6 @@ I -> ,num) | )
 N -> lambda | .MN
 M -> expand | reduce | post | play P | loop( num ) | fill( num ) | tune( num )
 P -> lambda | ( num ) 
-
 
 
 
