@@ -1,0 +1,22 @@
+Decisiones tomadas
+==================
+
+Decidimos tomar las siguientes consideraciones:
+- Todas las funciones  pueden tomar 0, 1 o 2 parametros, tomando valores por defecto en caso de que
+    sean menos de 2 parametros. En el caso de tener 0 parametros, no se escriben los parentesis '()'
+- El whitespace de los programas es eliminado y no considerado, con excepcion del caso de las // que
+    eliminan lo siguiente de esa linea.
+- La gramatica definida es LL(1) dado que para dos producciones con misma parte izquierda, no hay 
+    son disjuntos los simbolos directrices generados.
+
+
+Conclusion
+===========
+
+A traves de este trabajo, pudimos apreciar las diferencias entre lexers y parsers. Aunque tomamos un
+subconjunto de las reglas necesarias para escribir una gramatica que sea entendible por un compilador,
+hace falta un poco mas de trabajo para que sea entendible por un compilador como \texttt{ANTLR} o \texttt{yacc}. 
+Quizas haber hecho que sea LL(1) lo hace un poco mas ilegible que si no nos hubieramos puesto esa restriccion.
+
+
+
