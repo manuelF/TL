@@ -24,95 +24,115 @@ If you have a question, please use the support box in the bottom right of the sc
 
 \section{Símbolos}
 
-
-\subsection{Símbolos no terminales}
+\begin{itemize}
+\item \textbf{Símbolos no terminales}
 
 \begin{center}
 $V_n$ = \{S R op G F H I N M P funcion\}.
 \end{center}
 
-\subsection{Símbolos terminales}
+\item \textbf{Símbolos terminales}
 
 \begin{center}
 $V_t$ = \{, \{ \} ( ) num expand reduce post loop fill tune play sin lin sil noi mix con add sub mul div\}.
 \end{center}
 
-\subsection{Símbolo distinguido}
+\item \textbf{Símbolo distinguido}
 
 \begin{center}
 $S$ = S 
 \end{center}
+\end{itemize}
 
 \section{Producciones}
-
-Del símbolo inicial a una lista de lista generadores con aplicaciones o generadores con aplicaciones unidos por operandos.
+\begin{itemize}
+\item Del símbolo inicial a una lista de lista generadores con aplicaciones o generadores con aplicaciones unidos por operandos.:
 \begin{center}
 S $\Rightarrow$ \{S\}N $|$ GNR \\
 R $\Rightarrow$ $\lambda$ $|$ op B 
 \end{center}
 
-Las operaciones pueden ser invocadas con los símbolos o con los nombres completos.
+\item Las operaciones pueden ser invocadas con los símbolos o con los nombres completos:
 \begin{center}
 op $\Rightarrow$ mix $|$ con $|$ add $|$ sub $|$ mul $|$ div \\ 
 \end{center}
 
-Los generadores pueden ser o numeros u objetos devueltos por funciones
+\item Los generadores pueden ser o numeros u objetos devueltos por funciones:
 \begin{center}
 G $\Rightarrow$ numero $|$ funcion \\ 
 \end{center}
 
+\item Las funciones según definidas en la página 2 del enunciado devuelven objetos:
+\begin{center}
+funcion $\Rightarrow$  FH \\
+F $\Rightarrow$ sin $|$ lin $|$ sil $|$ noi \\
+H $\Rightarrow$ $\lambda$ $|$ ( num I \\
+I $\Rightarrow$ ,num) $|$ ) \\
+\end{center}
 
+\item Los métodos de alteración pueden tener parámetros o no, y pueden ser encadenados:
+\end{itemize}
+\begin{center}
+N $\Rightarrow$ lambda $|$ .MN \\
+M $\Rightarrow$ expand $|$ reduce $|$ post $|$ play P $|$ loop( num ) $|$ fill( num ) $|$ tune( num ) \\
+P $\Rightarrow$ $\lambda$ $|$ ( num ) \\
+\end{center}
 
+\section{Lexer}
 
-
-\subsection{Comments}
-
-Comments can be added to the margins of the document using the \todo{Here's a comment in the margin!} todo command, as shown in the example on the right. You can also add inline comments too:
-
-\todo[inline, color=green!40]{This is an inline comment.}
-
-\subsection{Tables and Figures}
-
-Use the table and tabular commands for basic tables --- see Table~\ref{tab:widgets}, for example. You can upload a figure (JPEG, PNG or PDF) using the files menu. To include it in your document, use the includegraphics command as in the code for Figure~\ref{fig:frog} below.
-
-% Commands to include a figure:
-\begin{figure}
-\centering
-\includegraphics[width=0.5\textwidth]{frog.jpg}
-\caption{\label{fig:frog}This is a figure caption.}
-\end{figure}
-
-\begin{table}
-\centering
-\begin{tabular}{l|r}
-Item & Quantity \\\hline
-Widgets & 42 \\
-Gadgets & 13
-\end{tabular}
-\caption{\label{tab:widgets}An example table.}
-\end{table}
-
-\subsection{Mathematics}
-
-\LaTeX{} is great at typesetting mathematics. Let $X_1, X_2, \ldots, X_n$ be a sequence of independent and identically distributed random variables with $\text{E}[X_i] = \mu$ and $\text{Var}[X_i] = \sigma^2 < \infty$, and let
-$$S_n = \frac{X_1 + X_2 + \cdots + X_n}{n}
-      = \frac{1}{n}\sum_{i}^{n} X_i$$
-denote their mean. Then as $n$ approaches infinity, the random variables $\sqrt{n}(S_n - \mu)$ converge in distribution to a normal $\mathcal{N}(0, \sigma^2)$.
-
-\subsection{Lists}
-
-You can make lists with automatic numbering \dots
-
-\begin{enumerate}
-\item Like this,
-\item and like this.
-\end{enumerate}
-\dots or bullet points \dots
+\subsection{Presunciones }
 \begin{itemize}
-\item Like this,
-\item and like this.
+\item Nos reemplaza los números por el token numeros usando la expresión regular definida en la regla 'num'.
+\item Nos reemplaza las funciones por sus tokens correspondientes.
+\item Nos elimina todo caracteres que sigue el $//$ hasta el \textbackslash$n$, incluyendo las $//$
 \end{itemize}
 
-We hope you find write\LaTeX\ useful, and please let us know if you have any feedback using the help menu above.
+\subsection{Configuración del Lexer }
+\begin{itemize}
+
+\item Los números los definimos con expresiones regulares:
+\begin{center}
+num $\equiv$ (+ $|$ - $|$ ) [[1..9][0..9]* $|$ 0 ][.[0..9]*[1..9] $|$ .0 $|$ ]
+\end{center}
+
+\item Las funciones definidas con expresiones regulares:
+\begin{center}
+sin $\equiv$ sin \\ 						
+lin $\equiv$ [lin $|$ linear] \\
+sil $\equiv$ [sil $|$ silence] \\
+noi $\equiv$ [noi $|$ noise] \\
+\end{center}
+
+\item Los operandos definidos con expresiones regulares:
+\begin{center}
+mix $\equiv$ \& $|$ mix \\
+con $\equiv$ ; $|$ con \\
+add $\equiv$ + $|$ add \\
+sub $\equiv$ - $|$ sub \\
+mul $\equiv$ * $|$ mul \\
+div $\equiv$ / $|$ div
+\end{center}
+
+\item Reducción del whitespace y eliminación de los comentarios:
+
+\begin{center}
+E $\equiv$ [//\textbackslash$w$*\textbackslash$n$ $|$ \textbackslash$s$ $|$ \textbackslash$n$ ]*  
+\end{center}
+
+\end{itemize}
+
+\section{Decisiones tomadas}
+\begin{itemize}
+\item Todas las funciones  pueden tomar 0, 1 o 2 parámetros, tomando valores por defecto en caso de que sean menos de 2 parámetros. En el caso de tener 0 parametros, no se escriben los paréntesis '()'.
+
+\item El whitespace de los programas es eliminado y no considerado, con excepción del caso de las //, que eliminan lo siguiente de esa línea.
+
+\item La gramática definida es LL(1) dado que para dos producciones con misma parte izquierda, son disjuntos los simbolos directrices generados.
+\end{itemize}
+
+\section{Conclusión}
+A traves de este trabajo, pudimos apreciar las diferencias entre lexers y parsers. Aunque tomamos un subconjunto de las reglas necesarias para escribir una gramática que sea entendible por un compilador,
+hace falta un poco más de trabajo para que sea entendible por un compilador como \texttt{ANTLR} o \texttt{yacc}.  \\
+Quizás haber hecho que sea LL(1) lo hace un poco más ilegible frente a otras decisiones que podríamos haber tomado, pero nos pareció didácticamente conveniente usarlo.
 
 \end{document}
