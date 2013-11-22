@@ -87,5 +87,5 @@ param:	PR_START NUM PR_END
 	|
 	; 
 
-op:	mix | con | add | sub | mul | div
+op:	MIX | CON | ADD | SUB | MUL | DIV 
 	;
