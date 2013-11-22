@@ -1,8 +1,7 @@
 grammar collider;
+/* Reglas de Lexer */
 
-METODO: 'post'
-	;
-
+/* Homogenizamos los nombres de las funciones */
 SIN: 	'sin' | 'SIN' | 'Sin'
 	;
 
@@ -17,48 +16,76 @@ SIL:	'sil' | 'SIL' | 'Sil'
 NOI:	'noi' | 'NOI' | 'Noi'
 	|'noise' | 'NOISE' | 'Noise'
 	;
-
-BR_START: '{'
+/* op:	mix | con | add | sub | mul | div*/
+/* Tokenizamos los simbolos de operaciones */
+MIX:	'mix' | '&'
 	;
-BR_END: '}'
+CON:	'con' | ';'
 	;
-COLON:	';'
+ADD:	'add' | '+'
 	;
+SUB:	'sub' | '-'
+	;
+MUL:	'mul' | '*'
+	;
+DIV:	'div' | '/'
+	;
+/* Definimos los numeros con la regex que acepta punto flotante sin notacion cientifica */
 NUM	:('+' | '-' | ) ('1'..'9'('0'..'9')* | '0' )('.'('0'..'9')*('1'..'9') | '.0' | )
 	;
 PERIOD:	'.'
 	;
-OP:	'mix' | 'con' | 'add' | 'sub' | 'mul' | 'div'
-	;
+
 PR_START: '('
 	;
 PR_END:	')'
 	;
+/* Reglas de Parser */ 
 
+/* La gramatica es una sucesion de metodos, o un buffer con varios metodos aplicados */ 
 
-s:	n | g n
+gram:	sec_metodos | buffer sec_metodos /* r */
 	;
-/*Falta definir r*/
+/* Falta definir r que tiene un conflicto por un 'b' que no existe*/
 	
-g:	NUM | funcion
+buffer:	NUM | funcion 
 	;
-funcion: f h
+
+funcion: 
+	generadora repeticiones
 	;
-f:	'sin' | 'lin' | 'sil' | 'noi'
+
+generadora:	
+	SIN | LIN | SIL | NOI
 	;
-h:	PR_START NUM i
+/* Si no hay repeticiones, lambda, es por default 1 (creo) */
+repeticiones:	
+	PR_START NUM sec_repeticiones
+	|
+	;
+/* la cola de repeticiones */
+sec_repeticiones:
+	','NUM | PR_END
+	;
+
+/* Instanciamos un metodo que puede recibir parametros */	
+sec_metodos:	
+	'.' metodo sec_metodos
 	|
 	;
 
-i:	','NUM | PR_END
+/* Los metodos que reciben parametros, algunos obligatorios */
+metodo:	'expand' | 'reduce' | 'post' 
+	| 'play' param 
+	| 'loop' PR_START NUM PR_END 
+	| 'fill' PR_START NUM PR_END 
+	| 'tune' PR_START NUM PR_END
 	;
-	
-n:	'.' m n
-	|
-	;
-m:	'expand' | 'reduce' | 'post' | 'play' p | 'loop' PR_START NUM PR_END | 'fill' PR_START NUM PR_END | 'tune' PR_START NUM PR_END
-	;
-p:	PR_START NUM PR_END
+
+/* Los parametros pueden ser numeros, o sino, sin parentesis*/
+param:	PR_START NUM PR_END
 	|
 	; 
 
+op:	mix | con | add | sub | mul | div
+	;
