@@ -1,21 +1,22 @@
 grammar gram;
-prog:   (S NEWLINE)*;
-NEWLINE : [\r\n]+;
+prog:   (s)*;
 PLUS    : '+';
 MINUS   : '-';
-SIGN    : (PLUS|MINUS);
+sign    : (PLUS|MINUS);
 
-S
-    : L
-    | L'.'M
-    ;
+s
+   :l'.'m
+   ;
 
-L
-    : E | E ';' | E ';' L
-    | '{' L '}'
-    | '{' L '}' OP '{' L '}'
-    | '{' L '}' OP E
+l
+    : e | e ';' | e ';' l
+    | '{' l '}' findelista
     ;
+findelista
+	: OP '{' l '}'
+	 |OP e
+	|
+	;
 
 fragment OP
     : '&' | ';' | '+' | '-' | '*' | '/'
@@ -23,22 +24,22 @@ fragment OP
     ;
 
 
-num 
-    : SIGN? DIGS ('.' DIGS | DIGS )
+NUM 
+    : sign? DIGS '.'? DIGS)
     ;
 
-funcion
-    : 'sin(' num ',' num ')' 
-    | 'lin(' num ',' num ')' 
-    | 'linear(' num ',' num ')' 
+FUNCION
+    : 'sin(' NUM ',' NUM ')' 
+    | 'lin(' NUM ',' NUM ')' 
+    | 'linear(' NUM ',' NUM ')' 
     | 'sil()' 
     | 'silence()' 
-    | 'noi(' num ')'  
-    | 'noise(' num ')'
+    | 'noi(' NUM ')'  
+    | 'noise(' NUM ')'
     ;
-E
-    : funcion
-    | num
+e
+    : FUNCION
+    | NUM
     ;
 
 
@@ -46,11 +47,11 @@ fragment DIGS
     : '1'..'9' '0'..'9'*
     ;
 
-M
-    : 'expand' | 'reduce' | 'post' | '.'Mpunto | '.'Mpunto M
+m
+    : 'expand' | 'reduce' | 'post' | '.'mpunto | '.'mpunto m
     ;
 
-Mpunto 
-    : 'loop(' DIGS')' | 'fill('DIGS ')' |'tune(' SIGN DIGS ')' | 'play(' DIGS'  )'
+mpunto 
+    : 'loop(' DIGS')' | 'fill('DIGS ')' |'tune(' sign DIGS ')' | 'play(' DIGS'  )'
     ;
 
