@@ -13,33 +13,32 @@ public class Sheet {
         MusicBox.play(this.sheet);
     }
 
-    public void shiftTone(int offset){
-        for(int j=0; j<sheet.size(); j++){
+    public void shiftTone(int offset) {
+        for (int j = 0; j < sheet.size(); j++) {
             Note n = sheet.get(j);
-            if(offset>0) {
-                for(int i =0; i<offset; i++)
-                {
+            if (offset > 0) {
+                for (int i = 0; i < offset; i++) {
                     System.out.println("Pre: " + n.toString());
-                    if(n.tone==Tone.GS)
-                        n.octave=n.octave+1;
-                    n.tone=getNextHigher(n.tone);
+                    if (n.tone == Tone.GS)
+                        n.octave = n.octave + 1;
+                    n.tone = getNextHigher(n.tone);
                     System.out.println("Post: " + n.toString());
                 }
                 System.out.println();
             }
-            if(offset<0){
-                for(int i =0; i<Math.abs(offset); i++)
-                {
-                    if(n.tone==Tone.A)
-                        n.octave=n.octave-1;
-                    assert (n.octave>=0);
-                    n.tone= getNextLower(n.tone);
+            if (offset < 0) {
+                for (int i = 0; i < Math.abs(offset); i++) {
+                    if (n.tone == Tone.A)
+                        n.octave = n.octave - 1;
+                    assert (n.octave >= 0);
+                    n.tone = getNextLower(n.tone);
                 }
 
             }
         }
     }
-    private static Tone getNextLower(Tone t){
+
+    private static Tone getNextLower(Tone t) {
         switch (t) {
             case A:
                 return Tone.GS;
@@ -70,7 +69,8 @@ public class Sheet {
 
         }
     }
-    private static Tone getNextHigher(Tone t){
+
+    private static Tone getNextHigher(Tone t) {
         switch (t) {
             case A:
                 return Tone.AS;

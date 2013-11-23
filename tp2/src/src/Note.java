@@ -8,7 +8,7 @@ public class Note {
     public Note(Note other) {
         this.tone = other.tone;
         this.octave = other.octave;
-        this.duration=other.duration;
+        this.duration = other.duration;
     }
 
     public Note(Tone _tone, int _octave, Duration _duration) {
