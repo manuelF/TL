@@ -1,6 +1,8 @@
 grammar collider;
-/* Reglas de Lexer */
 
+/* Reglas de Lexer */
+/* Nos comemos el whitespace */
+WHITESPACE : ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+    { $channel = HIDDEN; } ;
 /* Homogenizamos los nombres de las funciones */
 SIN: 	'sin' | 'SIN' | 'Sin'
 	;
