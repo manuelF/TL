@@ -3,13 +3,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.SourceDataLine;
 import java.util.ArrayList;
 
-/**
- * Created with IntelliJ IDEA.
- * User: manuel
- * Date: 11/23/13
- * Time: 12:08 AM
- * To change this template use File | Settings | File Templates.
- */
+
 public class MusicBox {
     private static int getNote(Tone note, int octave) {
         int offset_note;
@@ -65,7 +59,7 @@ public class MusicBox {
 
     private static void makeSound(int note, int duration) {
         byte[] buf = new byte[1];
-        int sampling_freq = 44100;
+        int sampling_freq = samplingRate;
         try {
             AudioFormat af = new AudioFormat((float) sampling_freq, 8, 1, true, false);
             SourceDataLine sdl = AudioSystem.getSourceDataLine(af);

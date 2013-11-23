@@ -19,18 +19,21 @@ public class Sheet {
             if(offset>0) {
                 for(int i =0; i<offset; i++)
                 {
+                    System.out.println("Pre: " + n.toString());
                     if(n.tone==Tone.GS)
                         n.octave=n.octave+1;
-                    n.tone=getNextLower(n.tone);
+                    n.tone=getNextHigher(n.tone);
+                    System.out.println("Post: " + n.toString());
                 }
+                System.out.println();
             }
             if(offset<0){
-                for(int i =0; i<offset; i++)
+                for(int i =0; i<Math.abs(offset); i++)
                 {
                     if(n.tone==Tone.A)
                         n.octave=n.octave-1;
                     assert (n.octave>=0);
-                    n.tone=getNextHigher(n.tone);
+                    n.tone= getNextLower(n.tone);
                 }
 
             }

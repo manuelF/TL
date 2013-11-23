@@ -5,6 +5,12 @@ public class Note {
         duration = Duration.Quarter;
     }
 
+    public Note(Note other) {
+        this.tone = other.tone;
+        this.octave = other.octave;
+        this.duration=other.duration;
+    }
+
     public Note(Tone _tone, int _octave, Duration _duration) {
         tone = _tone;
         octave = _octave;
@@ -13,7 +19,9 @@ public class Note {
 
     @Override
     public String toString() {
-        return "Octave: " + Integer.toString(octave);
+        return "Tone: " + tone.name() +
+                " Octave: " + Integer.toString(octave) +
+                " Duration: " + duration.name();
     }
 
     public Tone tone;
