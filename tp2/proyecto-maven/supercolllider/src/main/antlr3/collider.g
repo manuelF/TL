@@ -97,16 +97,17 @@ mulDiv:
   ;
 
 
-generador:	
-	sin 
+generador returns [double value]
+:	
+	sin {$value = 1.0f;}
 	| 
-	lin 
+	lin {$value = 1.0f;}
 	| 
-	sil 
+	sil {$value = 1.0f;}
 	| 
-	noi
+	noi {$value = 1.0f;}
 	|
-	NUM
+	a=NUM {$value = Double.parseDouble($a.text);}
 	;
 	
 sin: 
@@ -123,7 +124,7 @@ sil:
   ;
   
 noi: 
-  NOI PR_START NUM PR_END
+  NOI PR_START NUM PR_END 
   ;
    
   
