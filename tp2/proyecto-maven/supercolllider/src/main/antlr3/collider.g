@@ -71,7 +71,7 @@ mixExpr:
   ;
 
 sumaRestaExpr:
-  mulDivExpr (sumaResta mulDivExpr)*
+  mulDivExpr (sumaResta mulDivExpr)* 
   ;
   
 mulDivExpr:
@@ -110,14 +110,9 @@ generador:
 	;
 	
 sin: 
-  SIN PR_START NUM sinPrima
+  SIN PR_START NUM (PR_END | ',' NUM PR_END)
   ;
   
-sinPrima:
-  PR_END
-  |
-  ',' NUM PR_END
-  ;
   
 lin: 
   LIN PR_START NUM ',' NUM PR_END
@@ -140,14 +135,13 @@ sec_metodos:
 
 /* Los metodos que reciben parametros, algunos obligatorios */
 metodo:	'expand' | 'reduce' | 'post' 
-	| 'play' param 
-	| 'loop' PR_START NUM PR_END 
-	| 'fill' PR_START NUM PR_END 
-	| 'tune' PR_START NUM PR_END
+	| 'play' (param | ) 
+	| 'loop' param 
+	| 'fill' param 
+	| 'tune' param
 	;
 
 /* Los parametros pueden ser numeros, o sino, sin parentesis*/
 param:	PR_START NUM PR_END
-	|
 	; 
 
