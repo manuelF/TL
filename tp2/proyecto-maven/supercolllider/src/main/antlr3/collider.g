@@ -1,11 +1,3 @@
-@lexer::header {
-  package org.meri.antlr_step_by_step.parsers;
-}
- 
-@parser::header {
-  package org.meri.antlr_step_by_step.parsers;
-}
-
 grammar collider;
 
 options {
@@ -57,34 +49,76 @@ PR_START: '('
 	;
 PR_END:	')'
 	;
+
+BR_START: '{'
+  ;
+BR_END: '}'
+  ;
 /* Reglas de Parser */ 
 
-/* La gramatica es una sucesion de metodos, o un buffer con varios metodos aplicados */ 
+/* La gramatica es un buffer con varios metodos aplicados. hubo que factorizar */ 
 
-gram:	sec_metodos | buffer sec_metodos /* r */
+sGram: gram EOF
+  ;
+
+gram: 
+  buffer sec_metodos  
 	;
-/* Falta definir r que tiene un conflicto por un 'b' que no existe*/
 	
-buffer:	NUM | funcion 
+buffer:	
+  NUM bufferPrima 
+  | 
+  generadora bufferPrima
+  |
+  BR_START buffer BR_END bufferPrima    
 	;
 
-funcion: 
-	generadora repeticiones
-	;
+bufferPrima:
+  op buffer bufferPrima
+  |
+  ';' buffer bufferPrima
+  |
+  sec_metodos
+  |
+  ;
+	
+
 
 generadora:	
-	SIN | LIN | SIL | NOI
+	sin 
+	| 
+	lin 
+	| 
+	sil 
+	| 
+	noi
 	;
-/* Si no hay repeticiones, lambda, es por default 1 (creo) */
-repeticiones:	
-	PR_START NUM sec_repeticiones
-	|
-	;
-/* la cola de repeticiones */
-sec_repeticiones:
-	','NUM | PR_END
-	;
-
+	
+sin: 
+  SIN PR_START NUM sinPrima
+  ;
+  
+sinPrima:
+  PR_END
+  |
+  ',' NUM PR_END
+  ;
+  
+lin: 
+  LIN PR_START NUM ',' NUM PR_END
+  ;
+  
+sil: 
+  SIL
+  ;
+  
+noi: 
+  NOI PR_START NUM PR_END
+  ;
+  
+op: MIX | CON | ADD | SUB | MUL | DIV 
+        ;  
+  
 /* Instanciamos un metodo que puede recibir parametros */	
 sec_metodos:	
 	'.' metodo sec_metodos
@@ -104,5 +138,3 @@ param:	PR_START NUM PR_END
 	|
 	; 
 
-op:	MIX | CON | ADD | SUB | MUL | DIV 
-	;
