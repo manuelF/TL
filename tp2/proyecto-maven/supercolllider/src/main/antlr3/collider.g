@@ -58,12 +58,9 @@ BR_END: '}'
 
 /* La gramatica es un buffer con varios metodos aplicados. hubo que factorizar */ 
 
-sGram: gram EOF
+sGram: buffer EOF
   ;
 
-gram: 
-  buffer sec_metodos  
-	;
 	
 buffer:	
   NUM bufferPrima 
