@@ -63,25 +63,41 @@ sGram: buffer EOF
 
 	
 buffer:	
-  NUM bufferPrima 
-  | 
-  generadora bufferPrima
-  |
-  BR_START buffer BR_END bufferPrima    
-	;
-
-bufferPrima:
-  op buffer bufferPrima
-  |
-  ';' buffer bufferPrima
-  |
-  sec_metodos
-  |
+  mixExpr (CON mixExpr)*
   ;
+
+mixExpr:
+  sumaRestaExpr (MIX sumaRestaExpr)*
+  ;
+
+sumaRestaExpr:
+  mulDivExpr (sumaResta mulDivExpr)*
+  ;
+  
+mulDivExpr:
+  bufferAtom (mulDiv bufferAtom)*
+  ;
+  
+bufferAtom:
+  generador sec_metodos
+  |
+  BR_START buffer BR_END sec_metodos
+  ;
+
+sumaResta:
+	ADD
+	|
+	SUB
+	;
 	
+mulDiv:
+  MUL
+  |
+  DIV
+  ;
 
 
-generadora:	
+generador:	
 	sin 
 	| 
 	lin 
@@ -89,6 +105,8 @@ generadora:
 	sil 
 	| 
 	noi
+	|
+	NUM
 	;
 	
 sin: 
@@ -112,9 +130,7 @@ sil:
 noi: 
   NOI PR_START NUM PR_END
   ;
-  
-op: MIX | CON | ADD | SUB | MUL | DIV 
-        ;  
+   
   
 /* Instanciamos un metodo que puede recibir parametros */	
 sec_metodos:	
