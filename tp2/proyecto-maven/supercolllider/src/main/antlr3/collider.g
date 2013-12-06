@@ -106,12 +106,12 @@ mulDiv:
 generador returns [ArrayList<Double> value]
 :	
   s=sin {$value = $s.value;}
-	/*| 
-	lin {$value = 1.0f;}
+
+	lin
 	| 
-	sil {$value = 1.0f;}
+	sil {$value = Buffer.sil();} 
 	| 
-	noi {$value = 1.0f;}*/
+	noi 
 	|
 	a=NUM {$value = Buffer.buffer(getDouble($a.text));}
 	;
@@ -147,11 +147,20 @@ sec_metodos:
 	;
 
 /* Los metodos que reciben parametros, algunos obligatorios */
-metodo:	'expand' | 'reduce' | 'post' 
-	| 'play' (param | ) 
-	| 'loop' param 
-	| 'fill' param 
-	| 'tune' param
+metodo:	
+  'expand' param
+  | 
+  'reduce' param
+  | 
+  'post' 
+	| 
+	'play' (param | ) 
+	| 
+	'loop' param 
+	| 
+	'fill' param 
+	| 
+	'tune' param
 	;
 
 /* Los parametros pueden ser numeros, o sino, sin parentesis*/

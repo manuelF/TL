@@ -9,11 +9,11 @@ public class Main {
         System.out.println(a);
     }
     public static void main(String[] args) throws Exception {   	
-        ANTLRStringStream in = new ANTLRStringStream("sin(1)");
+        ANTLRStringStream in = new ANTLRStringStream("sil");
         colliderLexer lexer = new colliderLexer(in);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         colliderParser parser = new colliderParser(tokens);
-        print(parser.generador().value.size()); // print the value
+        print(parser.generador().value); // print the value
     	 
     }
 
