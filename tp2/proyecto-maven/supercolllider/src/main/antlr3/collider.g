@@ -7,6 +7,12 @@ options {
     output = AST;
 }
 
+@parser::members {
+  public static double getDouble(String text){
+    return Double.parseDouble(text);
+  }
+}
+
 /* Reglas de Lexer */
 /* Nos comemos el whitespace */
 WHITESPACE : ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+    { $channel = HIDDEN; } ;
@@ -97,21 +103,27 @@ mulDiv:
   ;
 
 
-generador returns [double value]
+generador returns [ArrayList<Double> value]
 :	
-	sin {$value = 1.0f;}
-	| 
+  s=sin {$value = $s.value;}
+	/*| 
 	lin {$value = 1.0f;}
 	| 
 	sil {$value = 1.0f;}
 	| 
-	noi {$value = 1.0f;}
+	noi {$value = 1.0f;}*/
 	|
-	a=NUM {$value = Double.parseDouble($a.text);}
+	a=NUM {$value = Buffer.buffer(getDouble($a.text));}
 	;
 	
-sin: 
-  SIN PR_START NUM (PR_END | ',' NUM PR_END)
+sin returns [ArrayList<Double> value]
+: 
+  SIN PR_START c=NUM (PR_END | ',' a=NUM PR_END) {if($a.text == null){ 
+                                                    $value = Buffer.sin(getDouble($c.text),1);
+                                                  } else {
+                                                    $value = Buffer.sin(getDouble($c.text),getDouble($a.text));
+                                                  }
+                                                 }
   ;
   
   
