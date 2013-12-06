@@ -106,7 +106,7 @@ mulDiv:
 generador returns [ArrayList<Double> value]
 :	
   s=sin {$value = $s.value;}
-
+  |
 	lin
 	| 
 	sil {$value = Buffer.sil();} 
