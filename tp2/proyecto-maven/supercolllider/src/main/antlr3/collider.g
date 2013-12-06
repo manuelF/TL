@@ -107,11 +107,11 @@ generador returns [ArrayList<Double> value]
 :	
   s=sin {$value = $s.value;}
   |
-	lin
+	lin {$value = $s.value;}
 	| 
 	sil {$value = Buffer.sil();} 
 	| 
-	noi 
+	noi {$value = $s.value;}
 	|
 	a=NUM {$value = Buffer.buffer(getDouble($a.text));}
 	;
@@ -127,16 +127,16 @@ sin returns [ArrayList<Double> value]
   ;
   
   
-lin: 
-  LIN PR_START NUM ',' NUM PR_END
+lin returns [ArrayList<Double> value]:
+  LIN PR_START a=NUM ',' b=NUM PR_END {$value = Buffer.lin(a,b);}
   ;
   
 sil: 
   SIL
   ;
   
-noi: 
-  NOI PR_START NUM PR_END 
+noi returns [ArrayList<Double> value]:
+  NOI PR_START a=NUM PR_END {$value = Buffer.noi(a);}
   ;
    
   

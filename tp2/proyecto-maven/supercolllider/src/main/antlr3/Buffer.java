@@ -32,9 +32,20 @@ public class Buffer {
         return buff;
     }
 
-    //TODO
     public static ArrayList<Double> lin (double a, double b) {
         ArrayList<Double> buff = new ArrayList<Double>();
+        double diff = (b - a)/(beat - 1);
+        for (int i = 0; i < beat; i++){
+            buff.add(a + diff * i);
+        }
+        return buff;
+    }
+
+    public static ArrayList<Double> noi (double a) {
+        ArrayList<Double> buff = new ArrayList<Double>();
+        for (int i = 0; i < beat*a; i++){
+            buff.add(Math.random()*2 - 1);
+        }
         return buff;
     }
 
