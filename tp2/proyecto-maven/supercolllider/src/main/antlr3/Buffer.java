@@ -26,28 +26,27 @@ public class Buffer {
         return buff;
     }
 
-    public static ArrayList<Double> play(ArrayList<Double> buff){
-        for(Double note: buff){
-            note_play(note.intValue(),beat);
-        }
-
-        return buff;
-    }
-//    private static void note_play(Double pitch){
-    private static void note_play(int note, double duration) {
+    public static void play(ArrayList<Double> notes) {
         byte[] buf = new byte[1];
         double sampling_freq =sampling_rate;
+        int duration = beat;
 
-            try {
+        try {
             AudioFormat af = new AudioFormat((float) sampling_freq, 8, 1, true, false);
             SourceDataLine sdl = AudioSystem.getSourceDataLine(af);
             sdl = AudioSystem.getSourceDataLine(af);
             sdl.open(af);
             sdl.start();
-            for (int i = 0; i < duration; i++) {
-                double angle = i / (sampling_freq / note) * 2.0 * Math.PI;
-                buf[0] = (byte) (Math.sin(angle) * 100);
-                sdl.write(buf, 0, 1);
+            System.out.println("Note size: " + notes.size());
+            System.out.println("duration: " + duration);
+            for(int j = 0 ; j < notes.size(); j+=duration){
+
+                for (int i = 0; i < duration; i++) {
+                    Double note = notes.get(j+i);
+                    double angle = i / ( note) * 2.0 * Math.PI;
+                    buf[0] = (byte) (Math.sin(angle) * 100);
+                    sdl.write(buf, 0, 1);
+                }
             }
             sdl.drain();
             sdl.stop();

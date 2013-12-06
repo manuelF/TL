@@ -103,8 +103,7 @@ mulDiv:
   ;
 
 
-generador returns [ArrayList<Double> value]
-:	
+generador returns [ArrayList<Double> value]:
   s=sin {$value = $s.value;}
   |
 	lin {$value = $s.value;}
@@ -116,8 +115,7 @@ generador returns [ArrayList<Double> value]
 	a=NUM {$value = Buffer.buffer(getDouble($a.text));}
 	;
 	
-sin returns [ArrayList<Double> value]
-: 
+sin returns [ArrayList<Double> value]: 
   SIN PR_START c=NUM (PR_END | ',' a=NUM PR_END) {if($a.text == null){ 
                                                     $value = Buffer.sin(getDouble($c.text),1);
                                                   } else {
@@ -128,7 +126,7 @@ sin returns [ArrayList<Double> value]
   
   
 lin returns [ArrayList<Double> value]:
-  LIN PR_START a=NUM ',' b=NUM PR_END {$value = Buffer.lin(a,b);}
+  LIN PR_START a=NUM ',' b=NUM PR_END {$value = Buffer.lin(getDouble($a.text), getDouble($a.text));}
   ;
   
 sil: 
@@ -136,7 +134,7 @@ sil:
   ;
   
 noi returns [ArrayList<Double> value]:
-  NOI PR_START a=NUM PR_END {$value = Buffer.noi(a);}
+  NOI PR_START a=NUM PR_END {$value = Buffer.noi(getDouble($a.text));}
   ;
    
   
