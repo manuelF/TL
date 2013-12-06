@@ -5,13 +5,15 @@ import javax.sound.sampled.SourceDataLine;
 
 
 public class Buffer {
-    public static double sampling_rate = 44100;
-    public static double beat = sampling_rate / 12;
+    public static int sampling_rate = 44100;
+    public static int beat = sampling_rate / 12;
 
 	public static ArrayList<Double> buffer(double number) {
-	    ArrayList<Double> list = new ArrayList<Double>();
-        list.add(number);
-        return list;
+	    ArrayList<Double> buff = new ArrayList<Double>();
+        for (int i = 0; i < beat; i++){
+            buff.add(number);
+        }
+        return buff;
 	}
 
     public static ArrayList<Double> sin (double c, double a) {
@@ -54,6 +56,33 @@ public class Buffer {
             System.out.println("fin del mundo " + ex.getMessage());
         }
     }
+    public static ArrayList<Double> sil() {
+        ArrayList<Double> buff = new ArrayList<Double>();
+        double cero = 0;
+        for (int i = 0; i < beat; i++){
+            buff.add(cero);
+        }
+        return buff;
+    }
+
+    public static ArrayList<Double> lin (double a, double b) {
+        ArrayList<Double> buff = new ArrayList<Double>();
+        double diff = (b - a)/(beat - 1);
+        for (int i = 0; i < beat; i++){
+            buff.add(a + diff * i);
+        }
+        return buff;
+    }
+
+    public static ArrayList<Double> noi (double a) {
+        ArrayList<Double> buff = new ArrayList<Double>();
+        for (int i = 0; i < beat*a; i++){
+            buff.add(Math.random()*2 - 1);
+        }
+        return buff;
+    }
+
+
 }
 
 

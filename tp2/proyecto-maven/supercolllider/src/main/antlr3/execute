@@ -2,3 +2,6 @@ java -cp antlr-3.3-complete.jar org.antlr.Tool collider.g;
 javac -cp .:antlr-3.3-complete.jar Main.java;
 java -cp .:antlr-3.3-complete.jar Main;
 rm -f *.class;
+rm -f colliderParser.java;
+rm -f colliderLexer.java;
+rm -f collider.tokens;
