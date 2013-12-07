@@ -56,6 +56,17 @@ public class Buffer {
         return buff;
     }
 
+    public static ArrayList<Double> loop (ArrayList<Double> buff, double times) {
+        ArrayList<Double> localbuff = new ArrayList<Double>();
+        int fulltimes=(int)times;
+        for(int i = 0; i< fulltimes; i++)
+            localbuff.addAll(buff);
+        int partial = (int) ((times - fulltimes)*(double)buff.size());
+        for(int i = 0; i< partial; i++)
+            localbuff.add(buff.get(i));
+
+        return localbuff;
+    }
     public static void music_play(ArrayList<Double> notes) {
         byte[] buf = new byte[1];
         double sampling_freq =sampling_rate;
@@ -85,17 +96,6 @@ public class Buffer {
         } catch (Exception ex) {
             System.out.println("fin del mundo " + ex.getMessage());
         }
-    }
-    public static ArrayList<Double> Concatenate(
-            ArrayList<Double> l,
-            ArrayList<Double> r ){
-
-        ArrayList<Double> ret = new ArrayList<Double>();
-        ret.addAll(l);
-        ret.addAll(r);
-        ret.trimToSize();
-        return ret;
-    
     }
 
 }

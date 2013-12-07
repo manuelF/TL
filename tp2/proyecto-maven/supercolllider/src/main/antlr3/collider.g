@@ -135,8 +135,8 @@ lin returns [ArrayList<Double> value]:
   LIN PR_START a=NUM ',' b=NUM PR_END {$value = Buffer.lin(getDouble($a.text), getDouble($a.text));}
   ;
   
-sil: 
-  SIL
+sil returns [ArrayList<Double> value]: 
+  SIL {$value = Buffer.sil();}
   ;
   
 noi returns [ArrayList<Double> value]:
@@ -158,9 +158,9 @@ metodo[ArrayList<Double> buff] returns [ArrayList<Double> value]:
   | 
   'post' {$value = new ArrayList<Double>();}
 	| 
-	'play' (p=param | ) {$value = new ArrayList<Double>();}
+	'play' (p=param | ) {$value = Buffer.play(buff) ;}
 	| 
-	'loop' a=param {$value = new ArrayList<Double>();}/* {$value = Buffer.loop(getDouble($a.text)} */
+	'loop' a=param {$value = Buffer.loop(buff, $a.value);}
 	| 
 	'fill' param {$value = new ArrayList<Double>();}
 	| 
