@@ -1,7 +1,7 @@
 
 import java.util.ArrayList;
 public class Utils{
-public static ArrayList<Double> Concatenate(
+	public static ArrayList<Double> Concatenate(
             ArrayList<Double> l,
             ArrayList<Double> r ){
 
@@ -12,5 +12,7 @@ public static ArrayList<Double> Concatenate(
         return ret;
     
     }
+	
+	public static int doubleToInt(double n) {return Math.round(Math.round(n));}
 
 }
