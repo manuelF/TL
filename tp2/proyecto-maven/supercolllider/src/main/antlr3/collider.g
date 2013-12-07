@@ -11,8 +11,6 @@ options {
   public static double getDouble(String text){
     return Double.parseDouble(text);
   }
-  
-  public class 
 }
 
 /* Reglas de Lexer */
@@ -67,35 +65,44 @@ BR_END: '}'
 /* La gramatica es un buffer con varios metodos aplicados. hubo que factorizar */ 
 
 sGram returns [ArrayList<Double> value]: 
-  b=buffer EOF {$value = $b.value}
+  b=buffer EOF {$value = $b.value;}
   ;
 
 	
 buffer returns [ArrayList<Double> value]:	
-  mixExpr (CON mixExpr)*
+  mixExpr (CON mixExpr)* {$value = new ArrayList<Double>();}
   ;
 
 mixExpr returns [ArrayList<Double> value]:
-  sumaRestaExpr (MIX sumaRestaExpr)*
+  sumaRestaExpr (MIX sumaRestaExpr)* {$value = new ArrayList<Double>();}
   ;
 
 sumaRestaExpr returns [ArrayList<Double> value]:
-  mulDivExpr (ADD mulDivExpr)*
-  |
-  mulDivExpr (SUB mulDivExpr)* 
+  mulDivExpr (sumaResta mulDivExpr)* {$value = new ArrayList<Double>();} 
   ;
   
 mulDivExpr returns [ArrayList<Double> value]:
-  bufferAtom (MUL bufferAtom)*
-  |
-  bufferAtom (DIV bufferAtom)*
+  bufferAtom (mulDiv bufferAtom)* {$value = new ArrayList<Double>();}
   ;
   
 bufferAtom returns [ArrayList<Double> value]:
-  gen=generador sec=sec_metodos[$gen.value] {$value = $sec.value}
+  gen=generador sec1=sec_metodos[$gen.value] {$value = $sec1.value;}
   |
-  BR_START buffer BR_END sec_metodos  
+  BR_START b=buffer BR_END sec2=sec_metodos[$b.value] {$value = $sec2.value;}  
   ;
+  
+sumaResta:
+  ADD
+  |
+  SUB
+  ;
+        
+mulDiv:
+  MUL
+  |
+  DIV
+  ;
+  
 
 
 
@@ -150,11 +157,11 @@ metodo[ArrayList<Double> buff] returns [ArrayList<Double> value]:
 	| 
 	'play' (p=param | ) {$value = new ArrayList<Double>();}
 	| 
-	'loop' a=param {$value = = new ArrayList<Double>();}/* {$value = Buffer.loop(getDouble($a.text)} */
+	'loop' a=param {$value = new ArrayList<Double>();}/* {$value = Buffer.loop(getDouble($a.text)} */
 	| 
-	'fill' param {$value = = new ArrayList<Double>();}
+	'fill' param {$value = new ArrayList<Double>();}
 	| 
-	'tune' param{$value = = new ArrayList<Double>();}
+	'tune' param{$value = new ArrayList<Double>();}
 	;
 
 /* Los parametros pueden ser numeros, o sino, sin parentesis*/
