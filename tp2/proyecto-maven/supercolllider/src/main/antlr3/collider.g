@@ -77,15 +77,15 @@ buffer returns [ArrayList<Double> value]:
   ;
 
 mixExpr returns [ArrayList<Double> value]:
-  b1=sumaRestaExpr (MIX sumaRestaExpr)* {$value = $b1.value;}
+  b1=sumaRestaExpr {$value = $b1.value;} (MIX b2=sumaRestaExpr {Buffer.oper("m",$value,$b2.value);})* 
   ;
 
 sumaRestaExpr returns [ArrayList<Double> value]:
-  b1=mulDivExpr {$value = $b1.value;} (op=sumaResta b2=mulDivExpr)* 
+  b1=mulDivExpr {$value = $b1.value;} (op=sumaResta b2=mulDivExpr {if ($op.value) Buffer.oper("+",$value,$b2.value); else Buffer.oper("-",$value,$b2.value);})* 
   ;
   
 mulDivExpr returns [ArrayList<Double> value]:
-  b1=bufferAtom (op=mulDiv b2=bufferAtom)* {$value = $b1.value;}
+  b1=bufferAtom {$value = $b1.value;} (op=mulDiv b2=bufferAtom {if ($op.value) Buffer.oper("*",$value,$b2.value); else Buffer.oper("/",$value,$b2.value);})*
   ;
   
 bufferAtom returns [ArrayList<Double> value]:

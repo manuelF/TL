@@ -8,7 +8,15 @@ public class Buffer {
     public static int sampling_rate = 44100;
     public static int beat = sampling_rate / 12;
 
-	public static ArrayList<Double> buffer(double number) {
+    public static ArrayList<Double> resize(ArrayList<Double> a, double number){
+    	ArrayList<Double> buff = new ArrayList<Double>();
+    	for (int i = 0; i < number*beat; i++){
+    		buff.add(a.get(i % a.size()));
+    	}
+    	return buff;
+    }
+    
+   	public static ArrayList<Double> buffer(double number) {
 	    ArrayList<Double> buff = new ArrayList<Double>();
         for (int i = 0; i < beat; i++){
             buff.add(number);
@@ -155,21 +163,8 @@ public class Buffer {
     }
     
     public static ArrayList<Double> oper(String op, ArrayList<Double> buffA, ArrayList<Double> buffB){
-		ArrayList<Double> a;
-		ArrayList<Double> b;
-		if (buffA.size() == 1  || buffB.size() == 1){
-			a = buffA;
-			b = buffB;
-		} else {
-			if (buffA.size() < buffB.size()){
-	    		a = resize(buffA,  buffB.size());
-	    		b = buffB;
-	    	} else {
-	    		a = buffA;
-	    		b = resize(buffB,  buffA.size());
-	    	}
-		}
-    	
+		ArrayList<Double> a = buffA.size() >= buffB.size()?buffA:resize(buffA, buffB.size());
+		ArrayList<Double> b = buffA.size() >= buffB.size()?buffA:resize(buffA, buffB.size());
     	
     	if (op.equals("+")) return sum(a,b);
     	if (op.equals("-")) return sub(a,b);
@@ -182,13 +177,8 @@ public class Buffer {
     
     public static ArrayList<Double> sum(ArrayList<Double> a, ArrayList<Double> b){
     	ArrayList<Double> r = new ArrayList<Double>();
-    	if (a.size() == b.size()){
-    		for (int i = 0; i < a.size(); i++) r.add(a.get(i) + b.get(i));
-    	} else if (a.size() == 1 || b.size() == 1){
-    		for (int i = 0; i < b.size(); i++) r.add(a.get(0) + b.get(i));
-    	} 
-    	
-    	return r;
+    	for (int i = 0; i < a.size(); i++) r.add(a.get(i) + b.get(i));
+       	return r;
     }
     
     public static ArrayList<Double> sub(ArrayList<Double> a, ArrayList<Double> b){
@@ -199,11 +189,7 @@ public class Buffer {
     
     public static ArrayList<Double> mul(ArrayList<Double> a, ArrayList<Double> b){
     	ArrayList<Double> r = new ArrayList<Double>();
-    	if (a.size() == b.size()){
-    		for (int i = 0; i < a.size(); i++) r.add(a.get(i) * b.get(i));
-    	} else if (a.size() == 1 || b.size() == 1){
-    		for (int i = 0; i < b.size(); i++) r.add(a.get(0) * b.get(i));
-    	} 
+   		for (int i = 0; i < a.size(); i++) r.add(a.get(i) * b.get(i));
     	return r;
     }
     
