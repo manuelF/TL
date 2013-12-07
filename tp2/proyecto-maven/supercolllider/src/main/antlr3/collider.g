@@ -85,9 +85,9 @@ mulDivExpr:
   ;
   
 bufferAtom:
-  generador sec_metodos
+  generador sec_metodos 
   |
-  BR_START buffer BR_END sec_metodos
+  BR_START buffer BR_END sec_metodos  
   ;
 
 sumaResta:
@@ -139,26 +139,26 @@ noi returns [ArrayList<Double> value]:
    
   
 /* Instanciamos un metodo que puede recibir parametros */	
-sec_metodos:	
-	'.' metodo sec_metodos
-	|
+sec_metodos returns [ArrayList<Double> value]:	
+	'.' m=metodo s=sec_metodos {$value = Utils.Concatenate($m.value,$s.value);}
+	| {$value = new ArrayList<Double>();}
 	;
 
 /* Los metodos que reciben parametros, algunos obligatorios */
-metodo:	
-  'expand' param
+metodo returns [ArrayList<Double> value]:	
+  'expand' param{$value = new ArrayList<Double>();}
   | 
-  'reduce' param
+  'reduce' param{$value = new ArrayList<Double>();}
   | 
-  'post' 
+  'post' {$value = new ArrayList<Double>();}
 	| 
-	'play' (param | ) 
+	'play' (param | ) {$value = new ArrayList<Double>();}
 	| 
-	'loop' param 
+	'loop' a=param {$value = new ArrayList<Double>();}/* {$value = Buffer.loop(getDouble($a.text)} */
 	| 
-	'fill' param 
+	'fill' param {$value = new ArrayList<Double>();}
 	| 
-	'tune' param
+	'tune' param{$value = new ArrayList<Double>();}
 	;
 
 /* Los parametros pueden ser numeros, o sino, sin parentesis*/
