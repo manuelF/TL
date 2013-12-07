@@ -11,6 +11,9 @@ options {
   public static double getDouble(String text){
     return Double.parseDouble(text);
   }
+  private static void print(Object a) {
+        System.out.println(a);
+  }
 }
 
 /* Reglas de Lexer */
@@ -70,19 +73,19 @@ sGram returns [ArrayList<Double> value]:
 
 	
 buffer returns [ArrayList<Double> value]:	
-  mixExpr (CON mixExpr)* {$value = new ArrayList<Double>();}
+  b1=mixExpr {$value = $b1.value;} (CON b2=mixExpr {$value = Utils.Concatenate($value,$b2.value);})* 
   ;
 
 mixExpr returns [ArrayList<Double> value]:
-  sumaRestaExpr (MIX sumaRestaExpr)* {$value = new ArrayList<Double>();}
+  b1=sumaRestaExpr (MIX sumaRestaExpr)* {$value = $b1.value;}
   ;
 
 sumaRestaExpr returns [ArrayList<Double> value]:
-  mulDivExpr (sumaResta mulDivExpr)* {$value = new ArrayList<Double>();} 
+  b1=mulDivExpr {$value = $b1.value;} (op=sumaResta b2=mulDivExpr)* 
   ;
   
 mulDivExpr returns [ArrayList<Double> value]:
-  bufferAtom (mulDiv bufferAtom)* {$value = new ArrayList<Double>();}
+  b1=bufferAtom (op=mulDiv b2=bufferAtom)* {$value = $b1.value;}
   ;
   
 bufferAtom returns [ArrayList<Double> value]:
@@ -91,16 +94,16 @@ bufferAtom returns [ArrayList<Double> value]:
   BR_START b=buffer BR_END sec2=sec_metodos[$b.value] {$value = $sec2.value;}  
   ;
   
-sumaResta:
-  ADD
+sumaResta returns [boolean value]:
+  ADD {$value = true;} 
   |
-  SUB
+  SUB {$value = false;}
   ;
         
-mulDiv:
-  MUL
+mulDiv returns [boolean value]:
+  MUL {$value = true;} 
   |
-  DIV
+  DIV {$value = false;} 
   ;
   
 
@@ -144,7 +147,7 @@ noi returns [ArrayList<Double> value]:
 /* Instanciamos un metodo que puede recibir parametros */	
 sec_metodos[ArrayList<Double> buffInicial] returns [ArrayList<Double> value]:	
 	'.' m=metodo[buffInicial] s=sec_metodos[$metodo.value] {$value = $s.value;}
-	| {$value = new ArrayList<Double>();}
+	| {$value = $buffInicial;}
 	;
 
 /* Los metodos que reciben parametros, algunos obligatorios */
