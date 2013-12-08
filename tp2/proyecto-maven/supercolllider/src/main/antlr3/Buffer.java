@@ -71,8 +71,7 @@ public class Buffer {
             sdl = AudioSystem.getSourceDataLine(af);
             sdl.open(af);
             sdl.start();
-            System.out.println("Buffer to Play size size: " + notes.size());
-            System.out.println("Sound duration: " + (1/12.0)* (((double)notes.size())/beat)/speed+ "s. ");
+            System.out.format("Sound duration: %.3f s%n", (1/12.0)* (((double)notes.size())/beat)/speed);
             assert(speed>0.0);
             double true_notes_length = notes.size()/speed;
 
