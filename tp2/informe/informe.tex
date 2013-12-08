@@ -75,11 +75,69 @@ producciones, es decir, atributos heredados. Con esto, logramos pasar
 los buffers generados a los m\'etodos que los alteraban y reproducian.
 
 \section{Programas ejemplos}
+\begin{itemize}
+    \item \textbf{Tambores} \texttt{ \{\{ sin(8); sin(4); sin(2); sin(1) \} * lin( 1.0, 0.0) \}.expand(12).play }
+    \item \textbf{Snare drum} \texttt{ \{ \{ sin( 16, 0.9)+noise(0.1) \}*lin( 1.0, 0.1) \}.expand(12).play  }
+\end{itemize}
 
 \section{Manual de uso}
+Para correr el programa, se debera compilar la gramatica con ANTLR, el Main con \texttt{javac} y luego
+se lo debera ejecutar como un \texttt{jar}  de Java normal, incluyendo al jar de ANTLR. Es decir (extrayendo del
+\texttt{./execute\_linux.sh}): 
+\begin{verbatim}
+#! /bin/bash
+echo "===Compilando la gramatica==="
+java -jar antlr-3.3-complete.jar collider.g;
+echo "===Compilando el main==="
+javac -cp .:antlr-3.3-complete.jar Main.java;
+echo "===Corriendo el main==="
+java -cp .:antlr-3.3-complete.jar Main;
+echo "===Borrando los .class==="
+rm -f *.class;
+\end{verbatim}
+A la linea de correr el main, tambien se le puede pasar parametros (por 
+defecto corre uno de los ejemplos que estan hardcodeados en el main). 
+Es decir, se lo puede invocar asi:
+\begin{verbatim}
+
+echo "===Corriendo el main con parametros==="
+java -cp .:antlr-3.3-complete.jar Main "{sin(44)}.loop(30).play";
+\end{verbatim}
+
 \section{Manual de instalaci\'on}
+Lo unico que se requiere para la instalaci\'on, es tener presente Java (1.6 basta),
+y el \texttt{.jar} de antlr 3.3, que viene incluido en la entrega.
+
+De no contarse con Java instalado, se lo podra instalar haciendo (en Debian/Ubuntu)
+\hbox{\texttt{sudo apt-get install openjdk-6-jdk }}
+
 \section{Decisiones tomadas}
+La principal decision que tomamos fue la de no usar objetos adicionales para
+recorrer el arbol generado por ANTLR e intepretarlo, y en vez decidimos hacer
+todo lo que pedia el enunciado en la semantica. Esto, nos ocasio\'o una gram\'atica
+un poco m\'as complicada de lo que podria haber sido si no hubieramos hecho esto,
+pero creemos que se entiende lo suficiente y nos deja como ventaja el hecho
+de que la gram\'atica quedara autocontenida y no desperdigada en la estructura
+de varios archivos java distintos.
+
+
 \section{Conclusiones}
+Finalmente, fue bastante lo que aprendimos con estos dos trabajos practicos.
+Creemos que lo m\'as importante fue el hecho de que muchas veces tenemos que
+leer archivos que tienen una sintaxis definible de fondo y terminamos haciendo
+siempre las mismas soluciones ad-hoc, con todos los bugs que presentan. Con
+herramientas como las gr\'amaticas libres de contexto encima, podemos representar
+facilmente y de manera muy clara que problema estamos resolviendo.
+
+Otra gran ventaja que descubrimos con esto, es la posiblidad de que la herramienta
+(en este caso ANTLR) genere codigo para reconocer cadenas en muchos lenguajes
+diferentes (C, Python, Java, Ruby, etc.) Esto nos permite portear al menos 
+esta secci\'on de la soluci\'on de una manera eficaz, sencilla y repetible. 
+Adem\'as, nos evita potencialmente asumir cosas sobre como procesa el lenguaje
+subyacente las cadenas. ANTLR se encarga de manipular las sutilezas y nosotros
+del contenido de la cadena leida.
+
+
 \section{Ap\'endice: C\'odigo}
 
 
