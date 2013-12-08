@@ -18,7 +18,7 @@
 
 \section{El problema}
 El trabajo practico n°2 consiste en realizar una gram\'atica para un lenguaje
-existente (Supercollider \url{}) y realizar un parser que pueda leerlo, entenderlo
+existente (Supercollider \url{supercollider.sourceforge.net }) y realizar un parser que pueda leerlo, entenderlo
 y reproducirlo. El problema esta compuesto principalmente de dos secciones:
 \begin{enumerate}
     \item Construir una gram\'atica que sea interpretable usando alguno de los
@@ -103,6 +103,9 @@ Es decir, se lo puede invocar asi:
 echo "===Corriendo el main con parametros==="
 java -cp .:antlr-3.3-complete.jar Main "{sin(44)}.loop(30).play";
 \end{verbatim}
+
+Para probar facilmente, hicimos un prompt interprete. Basta con ejecutar
+\texttt{./execute\_linux.sh}) y genera una linea de comandos donde se puede probar la gram\'atica.
 
 \section{Manual de instalaci\'on}
 Lo unico que se requiere para la instalaci\'on, es tener presente Java (1.6 basta),
