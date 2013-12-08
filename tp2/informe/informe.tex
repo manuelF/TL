@@ -104,6 +104,15 @@ los buffers generados a los m\'etodos que los alteraban y reproducian.
     \item \textbf{Snare drum}:\\
         \hbox{\texttt{ \{ \{ sin( 16, 0.9)+noise(0.1) \}*lin( 1.0, 0.1) \}.expand(12).play  }}
 \end{itemize}
+\section{Entradas inv\'alidas}
+\begin{itemize}
+    \item \textbf{no cierra llaves}:\\
+        \hbox{\texttt{ \{\{ sin(8)}} 
+    \item \textbf{métodos no aplicados a un buffer}:\\
+        \hbox{\texttt{.expand(12).play sin(1)  }}
+    \item \textbf{dos generadores seguidos, sin concatenar o que no sean parte de operaciones}:\\
+        \hbox{\texttt{ sin( 16, 0.9) noise(0.1)  }}
+\end{itemize}
 
 \section{Manual de uso}
 Para correr el programa, se debera compilar la gramatica con ANTLR, el Main con \texttt{javac} y luego
@@ -286,6 +295,9 @@ mulDiv returns [boolean value]:
   |
   DIV {$value = false;} 
   ;
+  
+
+
 
 generador returns [ArrayList<Double> value]:
   sin {$value = $sin.value;}
@@ -647,7 +659,11 @@ public class Buffer {
         return resample(buff, 
                     (int)(buff.size()*(Math.pow(Math.pow(2, 1/12.0),-pitch))));
     }
+
 }
+
+
+
 \end{lstlisting}
 
 \end{document}
