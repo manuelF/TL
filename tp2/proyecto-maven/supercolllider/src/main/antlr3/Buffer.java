@@ -80,6 +80,8 @@ public class Buffer {
                 Double note;
                 int index_base = (int) ((double)j*speed);
                 int index_top = (int) (((double)(j+1))*speed);
+                if(index_base>=notes.size()) index_base=notes.size()-1;
+                if(index_top>=notes.size()) index_top=notes.size()-1;
                 Double note_left = notes.get(index_base)*100.0;
                 Double note_right = notes.get(index_top)*100.0;
                 Double coef = (index_base-index_top)/(note_left-note_right) ;
