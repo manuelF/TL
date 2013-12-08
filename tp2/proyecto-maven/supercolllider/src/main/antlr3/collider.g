@@ -48,8 +48,8 @@ MUL:	'mul' | '*'
 	;
 DIV:	'div' | '/'
 	;
-/* Definimos los numeros con la regex que acepta punto flotante sin notacion cientifica */
-NUM	:('+' | '-' | ) ('1'..'9'('0'..'9')* | '0' )('.'('0'..'9')*('1'..'9') | '.0' | )
+/* Definimos los numeros enteros con la regex */
+INT	:('0'..'9'('0'..'9')*)
 	;
 PERIOD:	'.'
 	;
@@ -118,11 +118,11 @@ generador returns [ArrayList<Double> value]:
 	| 
 	noi {$value = $noi.value;}
 	|
-	a=NUM {$value = Buffer.buffer(getDouble($a.text));}
+	a=num {$value = Buffer.buffer(getDouble($a.text));}
 	;
 	
 sin returns [ArrayList<Double> value]: 
-  SIN PR_START c=NUM (PR_END | ',' a=NUM PR_END) {if($a.text == null){ 
+  SIN PR_START c=num (PR_END | ',' a=num PR_END) {if($a.text == null){ 
                                                     $value = Buffer.sin(getDouble($c.text),1);
                                                   } else {
                                                     $value = Buffer.sin(getDouble($c.text),getDouble($a.text));
@@ -132,7 +132,7 @@ sin returns [ArrayList<Double> value]:
   
   
 lin returns [ArrayList<Double> value]:
-  LIN PR_START a=NUM ',' b=NUM PR_END {$value = Buffer.lin(getDouble($a.text), getDouble($a.text));}
+  LIN PR_START a=num ',' b=num PR_END {$value = Buffer.lin(getDouble($a.text), getDouble($a.text));}
   ;
   
 sil returns [ArrayList<Double> value]: 
@@ -140,7 +140,7 @@ sil returns [ArrayList<Double> value]:
   ;
   
 noi returns [ArrayList<Double> value]:
-  NOI PR_START a=NUM PR_END {$value = Buffer.noi(getDouble($a.text));}
+  NOI PR_START a=num PR_END {$value = Buffer.noi(getDouble($a.text));}
   ;
    
   
@@ -168,6 +168,13 @@ metodo[ArrayList<Double> buff] returns [ArrayList<Double> value]:
 	;
 
 /* Los parametros pueden ser numeros, o sino, sin parentesis*/
-param returns [Double value]:	PR_START n=NUM PR_END {$value = getDouble($n.text);}
-	; 
+param returns [Double value]:	PR_START n=num PR_END {$value = getDouble($n.text);}
+	;
+
+/* Los numeros aceptados por la gramatica */
+num returns  [String text]:
+	(ADD{$text = $ADD.text;} | SUB {$text = $SUB.text;} | {$text = "";}) i1=INT {$text = $text + $i1.text;} (PERIOD i2=INT {$text = $text + $PERIOD.text + $i2.text;})?
+	;
+
+
 
