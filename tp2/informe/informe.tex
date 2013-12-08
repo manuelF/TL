@@ -286,9 +286,6 @@ mulDiv returns [boolean value]:
   |
   DIV {$value = false;} 
   ;
-  
-
-
 
 generador returns [ArrayList<Double> value]:
   sin {$value = $sin.value;}
@@ -650,11 +647,7 @@ public class Buffer {
         return resample(buff, 
                     (int)(buff.size()*(Math.pow(Math.pow(2, 1/12.0),-pitch))));
     }
-
 }
-
-
-
 \end{lstlisting}
 
 \end{document}
