@@ -149,90 +149,44 @@ public class Buffer {
     }
     
     public static ArrayList<Double> oper(String op, ArrayList<Double> buffA, ArrayList<Double> buffB){
-        ArrayList<Double> a;
-        ArrayList<Double> b;
-        if (buffA.size() == 1  || buffB.size() == 1){
-                a = buffA;
-                b = buffB;
-        } else {
-                if (buffA.size() < buffB.size()){
-                    a = resize(buffA,  buffB.size());
-                    b = buffB;
-            } else {
-                    a = buffA;
-                    b = resize(buffB,  buffA.size());
-            }
-        }
+        ArrayList<Double> a = buffA.size() < buffB.size() ? resize(buffA, buffB.size()) : buffA;
+        ArrayList<Double> b = buffB.size() < buffA.size() ? resize(buffB, buffA.size()) : buffB;
     
-    
-    if (op.equals("+")) return sum(a,b);
-    if (op.equals("-")) return sub(a,b);
-    if (op.equals("*")) return mul(a,b);
-    if (op.equals("/")) return div(a,b);
-    if (op.equals("m")) return mix(a,b);
-    return null;
-    
+		if (op.equals("+")) return sum(a,b);
+		if (op.equals("-")) return sub(a,b);
+		if (op.equals("*")) return mul(a,b);
+		if (op.equals("/")) return div(a,b);
+		if (op.equals("m")) return mix(a,b);
+		return null;
     }
     
     public static ArrayList<Double> sum(ArrayList<Double> a, ArrayList<Double> b){
         ArrayList<Double> r = new ArrayList<Double>();
-        if (a.size() == b.size()){
-    		for (int i = 0; i < a.size(); i++) r.add(a.get(i) + b.get(i));
-    	} else if (a.size() == 1) {
-    		for (int i = 0; i < a.size(); i++) r.add(a.get(0) + b.get(i));
-    	} else if (b.size() == 1) {
-    		for (int i = 0; i < a.size(); i++) r.add(b.get(i) + a.get(0));
-    	} 
-        
+   		for (int i = 0; i < a.size(); i++) r.add(a.get(i) + b.get(i));
         return r;
     }
     
     public static ArrayList<Double> sub(ArrayList<Double> a, ArrayList<Double> b){
     	ArrayList<Double> r = new ArrayList<Double>();
-    	if (a.size() == b.size()){
-    		for (int i = 0; i < a.size(); i++) r.add(a.get(i) - b.get(i));
-    	} else if (a.size() == 1) {
-    		for (int i = 0; i < a.size(); i++) r.add(a.get(0) - b.get(i));
-    	} else if (b.size() == 1) {
-    		for (int i = 0; i < a.size(); i++) r.add(b.get(i) - a.get(0));
-    	}
+   		for (int i = 0; i < a.size(); i++) r.add(a.get(i) - b.get(i));
     	return r;
     }
     
     public static ArrayList<Double> mul(ArrayList<Double> a, ArrayList<Double> b){
     	ArrayList<Double> r = new ArrayList<Double>();
-    	if (a.size() == b.size()){
-    		for (int i = 0; i < a.size(); i++) r.add(a.get(i) * b.get(i));
-    	} else if (a.size() == 1) {
-    		for (int i = 0; i < a.size(); i++) r.add(a.get(0) * b.get(i));
-    	} else if (b.size() == 1) {
-    		for (int i = 0; i < a.size(); i++) r.add(b.get(i) * a.get(0));
-    	} 
+   		for (int i = 0; i < a.size(); i++) r.add(a.get(i) * b.get(i));
     	return r;
     }
     
     public static ArrayList<Double> div(ArrayList<Double> a, ArrayList<Double> b){
     	ArrayList<Double> r = new ArrayList<Double>();
-    	if (a.size() == b.size()){
-    		for (int i = 0; i < a.size(); i++) r.add(a.get(i) / b.get(i));
-    	} else if (a.size() == 1) {
-    		for (int i = 0; i < a.size(); i++) r.add(a.get(0) / b.get(i));
-    	} else if (b.size() == 1) {
-    		for (int i = 0; i < a.size(); i++) r.add(b.get(i) / a.get(0));
-    	}
+   		for (int i = 0; i < a.size(); i++) r.add(a.get(i) / b.get(i));
     	return r;
     }
     
     public static ArrayList<Double> mix(ArrayList<Double> a, ArrayList<Double> b){
     	ArrayList<Double> r = new ArrayList<Double>();
-    	if (a.size() == b.size()){
-    		for (int i = 0; i < a.size(); i++) r.add((a.get(i) + b.get(i))/2);
-    	} else if (a.size() == 1) {
-    		for (int i = 0; i < a.size(); i++) r.add((a.get(0) + b.get(i))/2);
-    	} else if (b.size() == 1) {
-    		for (int i = 0; i < a.size(); i++) r.add((a.get(i) + b.get(0))/2);
-    	} 
-    	for (int i = 0; i < a.size(); i++) r.add((a.get(i) + b.get(i))/2);
+   		for (int i = 0; i < a.size(); i++) r.add((a.get(i) + b.get(i))/2);
     	return r;
     }
 

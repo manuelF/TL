@@ -8,7 +8,7 @@ public class Main {
         System.out.println(a);
     }
     public static void main(String[] args) throws Exception {   	
-        ANTLRStringStream in = new ANTLRStringStream("{1;1}.fill(4).tune(2).post.play");
+        ANTLRStringStream in = new ANTLRStringStream("{{1;20}+{5;5;3*4;2}}.loop(10).post.play");
         colliderLexer lexer = new colliderLexer(in);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         colliderParser parser = new colliderParser(tokens);
