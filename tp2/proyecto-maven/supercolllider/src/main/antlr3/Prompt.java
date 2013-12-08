@@ -22,13 +22,18 @@ public class Prompt {
         while(stringInput.hasNextLine())
         {
             input = stringInput.nextLine();
+            try{
+                ANTLRStringStream in = new ANTLRStringStream(input);
+                colliderLexer lexer = new colliderLexer(in);
+                CommonTokenStream tokens = new CommonTokenStream(lexer);
+                colliderParser parser = new colliderParser(tokens);
+                ArrayList<Double> toPlay = parser.sGram().value;
+            }catch(Exception ex){
+                System.out.println("Error: no se puede intepreretar la cadena \""+input+"\"");
+            }
 
-            ANTLRStringStream in = new ANTLRStringStream(input);
-            colliderLexer lexer = new colliderLexer(in);
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            colliderParser parser = new colliderParser(tokens);
-            ArrayList<Double> toPlay = parser.sGram().value;
             System.out.print("> ");
+            
         }
     }
 
