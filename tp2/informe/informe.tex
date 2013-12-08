@@ -1,0 +1,194 @@
+\documentclass[a4paper]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{hyperref}
+
+\title{Trabajo Pr\'actico 2 \\ Teoría de Lenguajes}
+
+
+\author{Manuel Ferreria, Luciano Gandini, Ignacio Gleria}
+
+\begin{document}
+\maketitle
+
+
+\section{El problema}
+El trabajo practico n°2 consiste en realizar una gram\'atica para un lenguaje
+existente (Supercollider \url{}) y realizar un parser que pueda leerlo, entenderlo
+y reproducirlo. El problema esta compuesto principalmente de dos secciones:
+\begin{enumerate}
+    \item Construir una gram\'atica que sea interpretable usando alguno de los
+        compiladores de compiladores (ANTLR, YACC, Bison, etc).
+    \item Definir una semantica unida a la gram\'atica, que permita dar significado
+        a las producciones, para que se simplifique el trabajo de analisis de las
+        cadenas y se llegue a la reproducci\'on adecuada.
+\end{enumerate}
+
+\section{Correcciones al TP 1}
+
+\section{Implementaci\'on}
+
+Como habiamos definido para el TP1 una soluci\'on ELL(1), decidimos proceder con
+ella para la realizacion de este TP2. Por lo tanto, la mejor herramienta con la
+que contamos era ANTLR. 
+
+La estructura que definimos cuenta con tres elementos principales
+\begin{itemize}
+    \item \textbf{collider.g}: La gramatica ELL(1) parseable por ANTLR,
+        donde se encuentran definidas las producciones y la sem\'antica
+        que se asocia.
+    \item \textbf{Buffer.java}: Las operaciones que se realizan en la 
+        gram\'atica invocan a los m\'etodos estaticos definidos en esta
+        clase. Ac\'a se encuentran las operaciones que operan sobre el 
+        buffer, los generadores y la reproducci\'on de los sonidos.
+    \item \textbf{Main.java}: ANTLR genera, dada una gram\'atica, un
+        par de clases que representan el Lexer y el Parser. Para
+        poder reconocer una cadena, hay que instanciar estas clases
+        con los strings de input. Ac\'a se las instancia para que se 
+        reproduzcan durante el parseo.
+\end{itemize}
+
+Para implementar la solucion, lo primero que hicimos fue definir toda la
+gr\'amatica, sin la parte de sintaxis. Para esto, nos basamos en el TP1 y
+acomodamos nuestras producciones al formato de Lexer y Parser que consume ANTLR.
+Para comprobar que se generaban los arboles que nosotros queriamos, utilizamos
+herramientas como ANTLRWorks y los plugins de IDEA y Eclipse para intepretar 
+las cadenas y ver las derivaciones. 
+
+Luego, agregamos la instanciaci\'on de de las clases generadas por ANTLR
+a una clase Main, donde nos permitio empezar a probar cadenas en un 
+entorno Java, donde se iba a parsear definitivamente.
+
+Para agregar la sem\'antica, primero tuvimos que entender como se interfaceaba
+ANTLR con un lenguaje de programaci\'on (en nuestro caso Java). Luego, descubrimos
+como se le agregaban valores de retorno a las producciones, para poder empezar
+a pasarselos y recibirlos de m\'etodos de la clase Buffer, que hacian las cuentas
+descriptas en el enunciado (\texttt{sin, expand, resample, etc}). Con esto
+pudimos describir los atributos sintetizados apropiadamente
+
+Finalmente, el \'ultimo detalle que necesitabamos era como pasar atributos a
+producciones, es decir, atributos heredados. Con esto, logramos pasar
+los buffers generados a los m\'etodos que los alteraban y reproducian.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Decisiones tomadas}
+\begin{itemize}
+\item Todas las funciones  pueden tomar 0, 1 o 2 parámetros, tomando valores por defecto en caso de que sean menos de 2 parámetros. En el caso de tener 0 parametros, no se escriben los paréntesis '()'.
+
+\item El whitespace de los programas es eliminado y no considerado, con excepción del caso de las //, que eliminan lo siguiente de esa línea.
+
+\item La gramática definida es LL(1) dado que para dos producciones con misma parte izquierda, son disjuntos los simbolos directrices generados.
+\end{itemize}
+
+\section{Lexer}
+
+\subsection{Presunciones del funcionamiento del Lexer }
+\begin{itemize}
+\item Nos reemplaza los números por el token numeros usando la expresión regular definida en la regla 'num'.
+\item Nos reemplaza las funciones por sus tokens correspondientes.
+\item Nos elimina todo caracteres que sigue el $//$ hasta el \textbackslash$n$, incluyendo las $//$
+\end{itemize}
+
+\subsection{Configuración del Lexer }
+\begin{itemize}
+
+\item Los números los definimos con expresiones regulares:
+\begin{center}
+num $\equiv$ (+ $|$ - $|$ ) [[1..9][0..9]* $|$ 0 ][.[0..9]*[1..9] $|$ .0 $|$ ]
+\end{center}
+
+\item Las funciones definidas con expresiones regulares:
+\begin{center}
+sin $\equiv$ sin \\ 						
+lin $\equiv$ [lin $|$ linear] \\
+sil $\equiv$ [sil $|$ silence] \\
+noi $\equiv$ [noi $|$ noise] \\
+\end{center}
+
+\item Los operandos definidos con expresiones regulares:
+\begin{center}
+mix $\equiv$ \& $|$ mix \\
+con $\equiv$ ; $|$ con \\
+add $\equiv$ + $|$ add \\
+sub $\equiv$ - $|$ sub \\
+mul $\equiv$ * $|$ mul \\
+div $\equiv$ / $|$ div
+\end{center}
+
+\item Reducción del whitespace y eliminación de los comentarios:
+
+\begin{center}
+E $\equiv$ [//\textbackslash$w$*\textbackslash$n$ $|$ \textbackslash$s$ $|$ \textbackslash$n$ ]*  
+\end{center}
+
+\end{itemize}
+
+
+
+\section{Definici\'on de la gram\'atica}
+
+\subsection{Símbolos no terminales}
+\begin{itemize}
+\item \textbf{$V_n$} = \{S R op G F H I N M P funcion\}.
+\end{itemize}
+
+
+\subsection{Símbolos terminales}
+\begin{itemize}
+\item \textbf{$V_t$} = \{, \{ \} ( ) num expand reduce post loop fill tune play sin lin sil noi mix con add sub mul div\}.
+\end{itemize}
+
+\subsection{Símbolo distinguido}
+\begin{itemize}
+\item \textbf{$S$} = S 
+\end{itemize}
+
+\subsection{Producciones}
+\begin{enumerate}
+\item Del símbolo inicial a una lista de lista generadores con aplicaciones o generadores con aplicaciones unidos por operandos.:
+
+\begin{itemize}
+\item \textbf{S} $\Rightarrow$ \{S\}N $|$ GNR 
+\item \textbf{R} $\Rightarrow$ $\lambda$ $|$ op B 
+\end{itemize}
+
+\item Las operaciones pueden ser invocadas con los símbolos o con los nombres completos:
+\begin{itemize}
+\item \textbf{op} $\Rightarrow$ mix $|$ con $|$ add $|$ sub $|$ mul $|$ div 
+\end{itemize}
+
+
+\item Los generadores pueden ser o numeros u objetos devueltos por funciones:
+\begin{itemize}
+\item \textbf{G} $\Rightarrow$ num $|$ funcion 
+\end{itemize}
+
+\item Las funciones según definidas en la página 2 del enunciado devuelven objetos:
+\begin{itemize}
+\item \textbf{funcion} $\Rightarrow$  FH 
+\item \textbf{F} $\Rightarrow$ sin $|$ lin $|$ sil $|$ noi 
+\item \textbf{H} $\Rightarrow$ $\lambda$ $|$ ( num I 
+\item \textbf{I} $\Rightarrow$ ,num) $|$ ) 
+\end{itemize}	
+
+\item Los métodos de alteración pueden tener parámetros o no, y pueden ser encadenados:
+
+\begin{itemize}
+\item \textbf{N} $\Rightarrow$ $\lambda$ $|$ .MN 
+\item \textbf{M} $\Rightarrow$ expand $|$ reduce $|$ post $|$ play P $|$ loop( num ) $|$ fill( num ) $|$ tune( num ) 
+\item \textbf{P} $\Rightarrow$ $\lambda$ $|$ ( num ) 
+\end{itemize}
+
+\end{enumerate}
+\end{document}
