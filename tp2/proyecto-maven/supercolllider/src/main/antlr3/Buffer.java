@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.lang.Math;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.SourceDataLine;
@@ -73,14 +74,20 @@ public class Buffer {
             sdl.open(af);
             sdl.start();
             System.out.println("Buffer to Play size size: " + notes.size());
-            System.out.println("Sound duration: " + (1/12.0)* ((double)notes.size())/duration+ "s. ");
+            System.out.println("Sound duration: " + (1/12.0)* (((double)notes.size())/duration)/speed+ "s. ");
             assert(speed>0.0);
-            double ratio = notes.size()/speed;
-            for(int j = 0 ; j < notes.size(); j++){
-//                    int subsampled_index =floor(j * ratio);
-                    Double note = notes.get(j)*100.0;
-                    buf[0]=(byte) (note.byteValue());
-                    sdl.write(buf, 0, 1);
+            double true_notes_length = notes.size()/speed;
+
+            for(int j = 0 ; j < true_notes_length; j++){
+                Double note;
+                int index_base = (int) ((double)j*speed);
+                int index_top = (int) (((double)(j+1))*speed);
+                Double note_left = notes.get(index_base)*100.0;
+                Double note_right = notes.get(index_top)*100.0;
+                Double coef = (index_base-index_top)/(note_left-note_right) ;
+                note = coef * note_left + (1.0-coef) * note_right;
+                buf[0]=(byte) (note.byteValue());
+                sdl.write(buf, 0, 1);
                 
             }
             sdl.drain();
