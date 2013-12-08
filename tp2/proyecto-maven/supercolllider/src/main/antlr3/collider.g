@@ -110,13 +110,13 @@ mulDiv returns [boolean value]:
 
 
 generador returns [ArrayList<Double> value]:
-  s=sin {$value = $s.value;}
+  sin {$value = $sin.value;}
   |
-	lin {$value = $s.value;}
+	lin {$value = $lin.value;}
 	| 
 	sil {$value = Buffer.sil();} 
 	| 
-	noi {$value = $s.value;}
+	noi {$value = $noi.value;}
 	|
 	a=NUM {$value = Buffer.buffer(getDouble($a.text));}
 	;
@@ -160,11 +160,11 @@ metodo[ArrayList<Double> buff] returns [ArrayList<Double> value]:
 	| 
 	'play' (p=param {$value = Buffer.play($buff,$p.value);}| {$value = Buffer.play($buff,1.0);})
 	| 
-	'loop' a=param {$value = Buffer.loop(buff, $a.value);}
+	'loop' a=param {$value = Buffer.loop($buff, $a.value);}
 	| 
-	'fill' a=param {$value = Buffer.fill(buff, $a.value);}
+	'fill' a=param {$value = Buffer.fill($buff, $a.value);}
 	| 
-	'tune' a=param {$value = Buffer.tune(buff, $a.value);}
+	'tune' a=param {$value = Buffer.tune($buff, $a.value);}
 	;
 
 /* Los parametros pueden ser numeros, o sino, sin parentesis*/
