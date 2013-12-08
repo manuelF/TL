@@ -112,7 +112,7 @@ Lo unico que se requiere para la instalaci\'on, es tener presente Java (1.6 bast
 y el \texttt{.jar} de antlr 3.3, que viene incluido en la entrega.
 
 De no contarse con Java instalado, se lo podra instalar haciendo (en Debian/Ubuntu)
-\hbox{\texttt{sudo apt-get install openjdk-6-jdk }}
+\hbox{\texttt{sudo apt-get install openjdk-6-jdk openjdk-6-jre }}
 
 \section{Decisiones tomadas}
 La principal decision que tomamos fue la de no usar objetos adicionales para
@@ -122,6 +122,11 @@ un poco m\'as complicada de lo que podria haber sido si no hubieramos hecho esto
 pero creemos que se entiende lo suficiente y nos deja como ventaja el hecho
 de que la gram\'atica quedara autocontenida y no desperdigada en la estructura
 de varios archivos java distintos.
+
+Otra decision que tomamos fue que los numeros pueden ser unicamente de la forma
+[0-9]+'.'[0-9]+ o [0-9]. No consideramos  la posiblidad de [0-9]'.' ya que es
+normalmente mal vista en varios lenguajes de programaci\'on, porque visibilemente
+oculta la existencia de que es un punto flotante y no un entero.
 
 
 \section{Conclusiones}
