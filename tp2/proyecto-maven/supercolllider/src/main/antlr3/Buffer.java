@@ -94,7 +94,7 @@ public class Buffer {
             sdl.stop();
             sdl.close();
         } catch (Exception ex) {
-            System.out.println("fin del mundo " + ex.getMessage());
+            System.out.println("Error en la reproduccion: " + ex.getCause() + " \n Detalles: "  + ex.getMessage());
         }
     }
 
@@ -253,7 +253,7 @@ public class Buffer {
     }
 
     public static ArrayList<Double> tune(ArrayList<Double> buff, Double pitch) {
-        return resample(buff, (int)(buff.size()*(Math.pow(Math.pow(2, 1/12),-pitch))));
+        return resample(buff, (int)(buff.size()*(Math.pow(Math.pow(2, 1/12.0),-pitch))));
     }
 
 }
