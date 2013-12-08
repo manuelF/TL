@@ -146,28 +146,28 @@ noi returns [ArrayList<Double> value]:
   
 /* Instanciamos un metodo que puede recibir parametros */	
 sec_metodos[ArrayList<Double> buffInicial] returns [ArrayList<Double> value]:	
-	'.' m=metodo[buffInicial] s=sec_metodos[$metodo.value] {$value = $s.value;}
+	'.' m=metodo[buffInicial] s=sec_metodos[m.value] {$value = $s.value;}
 	| {$value = $buffInicial;}
 	;
 
 /* Los metodos que reciben parametros, algunos obligatorios */
 metodo[ArrayList<Double> buff] returns [ArrayList<Double> value]:	
-  'expand' param{$value = new ArrayList<Double>();}
+  'expand' param{$value = Buffer.expand($buff, $param.value);}
   | 
-  'reduce' param{$value = new ArrayList<Double>();}
+  'reduce' param{$value = Buffer.reduce($buff, $param.value);}
   | 
-  'post' {$value = new ArrayList<Double>();}
+  'post' {$value = Buffer.post($buff);}
 	| 
-	'play' (p=param | ) {$value = Buffer.play(buff) ;}
+	'play' (p=param {$value = Buffer.play($buff,$p.value);}| {$value = Buffer.play($buff,1.0);})
 	| 
 	'loop' a=param {$value = Buffer.loop(buff, $a.value);}
 	| 
-	'fill' param {$value = new ArrayList<Double>();}
+	'fill' a=param {$value = Buffer.fill(buff, $a.value);}
 	| 
-	'tune' param{$value = new ArrayList<Double>();}
+	'tune' a=param {$value = Buffer.tune(buff, $a.value);}
 	;
 
 /* Los parametros pueden ser numeros, o sino, sin parentesis*/
-param returns [double value]:	PR_START n=NUM PR_END {$value = getDouble($n.text);}
+param returns [Double value]:	PR_START n=NUM PR_END {$value = getDouble($n.text);}
 	; 
 

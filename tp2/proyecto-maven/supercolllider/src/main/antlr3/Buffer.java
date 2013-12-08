@@ -10,7 +10,7 @@ public class Buffer {
 
     public static ArrayList<Double> resize(ArrayList<Double> a, double number){
     	ArrayList<Double> buff = new ArrayList<Double>();
-    	for (int i = 0; i < number*beat; i++){
+    	for (int i = 0; i < number; i++){
     		buff.add(a.get(i % a.size()));
     	}
     	return buff;
@@ -60,25 +60,11 @@ public class Buffer {
         return buff;
     }
 
-    public static ArrayList<Double> play (ArrayList<Double> buff) {
-        return buff;
-    }
-
-    public static ArrayList<Double> loop (ArrayList<Double> buff, double times) {
-        ArrayList<Double> localbuff = new ArrayList<Double>();
-        int fulltimes=(int)times;
-        for(int i = 0; i< fulltimes; i++)
-            localbuff.addAll(buff);
-        int partial = (int) ((times - fulltimes)*(double)buff.size());
-        for(int i = 0; i< partial; i++)
-            localbuff.add(buff.get(i));
-
-        return localbuff;
-    }
-    public static void music_play(ArrayList<Double> notes) {
+    public static void music_play(ArrayList<Double> notes, Double speed) {
         byte[] buf = new byte[1];
         double sampling_freq =sampling_rate;
         int duration = beat;
+        System.out.println("TODO implementar velocidad, speed is: " + speed);
 
         try {
             AudioFormat af = new AudioFormat((float) sampling_freq, 8, 1, true, false);
@@ -249,6 +235,66 @@ public class Buffer {
     	for (int i = 0; i < a.size(); i++) r.add((a.get(i) + b.get(i))/2);
     	return r;
     }
+
+	public static ArrayList<Double> expand(ArrayList<Double> buff, Double n){
+		Double total = beat*n;
+		if (buff.size() < total){
+			return resize(buff, total);
+		} else {
+			return buff;
+		}
+	}
+	
+	public static ArrayList<Double> reduce(ArrayList<Double> buff, Double n){
+		Double total = beat*n;
+		if (buff.size() > total){
+			return resize(buff, total);
+		} else {
+			return buff;
+		}
+	}
+	
+	public static ArrayList<Double> post(ArrayList<Double> buff){
+		for(int i = 0; i<buff.size(); i += beat) {
+			System.out.print(buff.get(i + beat/2) + " ");
+		}
+		System.out.println("");
+		return buff;
+	}
+	
+	public static ArrayList<Double> play(ArrayList<Double> buff, Double speed){
+		music_play(buff, speed);
+		return buff;
+	}
+
+	public static ArrayList<Double> loop (ArrayList<Double> buff, double times) {
+        ArrayList<Double> localbuff = new ArrayList<Double>();
+        int fulltimes=(int)times;
+        for(int i = 0; i< fulltimes; i++)
+            localbuff.addAll(buff);
+        int partial = (int) ((times - fulltimes)*(double)buff.size());
+        for(int i = 0; i< partial; i++)
+            localbuff.add(buff.get(i));
+
+        return localbuff;
+    }
+
+	public static ArrayList<Double> fill(ArrayList<Double> buff, Double size){
+        ArrayList<Double> localBuff = new ArrayList<Double>();
+        
+        Double total = size * beat;
+        Double zeros = total > buff.size() ? total - buff.size() : 0 ;     
+        
+        for(int i = 0; i < buff.size(); i++) localBuff.add(buff.get(i));
+        
+        for(int i = 0; i < zeros; i++) localBuff.add(0.0);
+        
+        return buff;
+	}
+	
+	public static ArrayList<Double> tune(ArrayList<Double> buff, Double pitch){
+        return resample(buff, (int)(buff.size()*(Math.pow(Math.pow(2, 1/12),-pitch))));
+	}
 
 }
 

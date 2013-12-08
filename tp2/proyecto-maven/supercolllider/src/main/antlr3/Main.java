@@ -8,13 +8,13 @@ public class Main {
         System.out.println(a);
     }
     public static void main(String[] args) throws Exception {   	
-        ANTLRStringStream in = new ANTLRStringStream("{1;1;1.123124}.loop(10)");
+        ANTLRStringStream in = new ANTLRStringStream("{1;1}.fill(4).tune(2).post.play");
         colliderLexer lexer = new colliderLexer(in);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         colliderParser parser = new colliderParser(tokens);
     	ArrayList<Double> toPlay = parser.sGram().value;
         print(toPlay.size()); // print the value
-        Buffer.music_play(toPlay);
+        //Buffer.music_play(toPlay,1.0);
     }
 
 }
