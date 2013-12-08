@@ -109,7 +109,7 @@ public class Buffer {
 
     public static ArrayList<Double> tune(ArrayList<Double> buff, int P) {
         int size = buff.size();
-        return resample(buff,Utils.doubleToInt(size * Math.pow(2.0, -P/12)));
+        return resample(buff,Utils.doubleToInt(size * Math.pow(2.0, -P/12.0)));
     }
 
     public static ArrayList<Double> resize(ArrayList<Double> buff, int L) {

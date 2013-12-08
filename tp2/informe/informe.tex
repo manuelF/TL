@@ -6,6 +6,29 @@
 \usepackage{graphicx}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\lstset{% This applies to ALL lstlisting
+%        backgroundcolor=\color{yellow!10},%
+            numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=2pt,%
+                }%
+
+                % Applies only when you use it
+                \lstdefinestyle{MyLang}{
+                basicstyle=\small\ttfamily\color{magenta},%
+                breaklines=true,%                                      allow line breaks
+                moredelim=[s][\color{green!50!black}\ttfamily]{'}{'},% single quotes in green
+                moredelim=*[s][\color{black}\ttfamily]{options}{\}},%  options in black (until trailing })
+                commentstyle={\color{gray}\itshape},%                  gray italics for comments
+                morecomment=[l]{//},%                                  define // comment
+                emph={%
+                        STRING%                                            literal strings listed here
+                        },emphstyle={\color{blue}\ttfamily},%              and formatted in blue
+                        alsoletter={:,|,;},%
+                        morekeywords={:,|,;},%                                 define the special characters
+                  keywordstyle={\color{black}},%                         and format them in black
+               }
 
 \title{Trabajo Pr\'actico 2 \\ Teoría de Lenguajes}
 
@@ -76,8 +99,10 @@ los buffers generados a los m\'etodos que los alteraban y reproducian.
 
 \section{Programas ejemplos}
 \begin{itemize}
-    \item \textbf{Tambores} \texttt{ \{\{ sin(8); sin(4); sin(2); sin(1) \} * lin( 1.0, 0.0) \}.expand(12).play }
-    \item \textbf{Snare drum} \texttt{ \{ \{ sin( 16, 0.9)+noise(0.1) \}*lin( 1.0, 0.1) \}.expand(12).play  }
+    \item \textbf{Tambores}:\\
+        \hbox{\texttt{ \{\{ sin(8); sin(4); sin(2); sin(1) \} * lin( 1.0, 0.0) \}.expand(12).play }}
+    \item \textbf{Snare drum}:\\
+        \hbox{\texttt{ \{ \{ sin( 16, 0.9)+noise(0.1) \}*lin( 1.0, 0.1) \}.expand(12).play  }}
 \end{itemize}
 
 \section{Manual de uso}
@@ -105,7 +130,7 @@ java -cp .:antlr-3.3-complete.jar Main "{sin(44)}.loop(30).play";
 \end{verbatim}
 
 Para probar facilmente, hicimos un prompt interprete. Basta con ejecutar
-\texttt{./execute\_linux.sh}) y genera una linea de comandos donde se puede probar la gram\'atica.
+\texttt{./execute\_linux\_prompt.sh}) y genera una linea de comandos donde se puede probar la gram\'atica.
 
 \section{Manual de instalaci\'on}
 Lo unico que se requiere para la instalaci\'on, es tener presente Java (1.6 basta),
@@ -147,119 +172,489 @@ del contenido de la cadena leida.
 
 
 \section{Ap\'endice: C\'odigo}
+\subsection{collider.g}
+\begin{lstlisting}[style=MyLang]
+grammar collider;
+
+options {
+    language = Java;
+    output = AST;
+}
+
+@parser::members {
+  public static double getDouble(String text){
+    return Double.parseDouble(text);
+  }
+  private static void print(Object a) {
+        System.out.println(a);
+  }
+}
+
+/* Reglas de Lexer */
+/* Nos comemos el whitespace */
+WHITESPACE : ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+    { $channel = HIDDEN; } ;
+/* Homogenizamos los nombres de las funciones */
+SIN: 	'sin' | 'SIN' | 'Sin'
+	;
+
+LIN:	'lin' | 'LIN' | 'Lin'
+	|'linear'| 'LINEAR' | 'Linear'
+	;
+
+SIL:	'sil' | 'SIL' | 'Sil'
+	|'silence' | 'SILENCE' | 'Silence'
+	;
+
+NOI:	'noi' | 'NOI' | 'Noi'
+	|'noise' | 'NOISE' | 'Noise'
+	;
+/* op:	mix | con | add | sub | mul | div*/
+/* Tokenizamos los simbolos de operaciones */
+MIX:	'mix' | '&'
+	;
+CON:	'con' | ';'
+	;
+ADD:	'add' | '+'
+	;
+SUB:	'sub' | '-'
+	;
+MUL:	'mul' | '*'
+	;
+DIV:	'div' | '/'
+	;
+/* Definimos los numeros enteros con la regex */
+INT	:('0'..'9'('0'..'9')*)
+	;
+PERIOD:	'.'
+	;
+
+PR_START: '('
+	;
+PR_END:	')'
+	;
+
+BR_START: '{'
+  ;
+BR_END: '}'
+  ;
+/* Reglas de Parser */ 
+
+/* La gramatica es un buffer con varios metodos aplicados. hubo que factorizar */ 
+
+sGram returns [ArrayList<Double> value]: 
+  b=buffer EOF 
+    {$value = $b.value;}
+  ;
+
+	
+buffer returns [ArrayList<Double> value]:	
+  b1=mixExpr {$value = $b1.value;} 
+    (CON b2=mixExpr {$value = Utils.Concatenate($value,$b2.value);})* 
+  ;
+
+mixExpr returns [ArrayList<Double> value]:
+  b1=sumaRestaExpr {$value = $b1.value;} 
+    (MIX b2=sumaRestaExpr {$value=Buffer.oper("m",$value,$b2.value);})* 
+  ;
+
+sumaRestaExpr returns [ArrayList<Double> value]:
+  b1=mulDivExpr {$value = $b1.value;} 
+    (op=sumaResta b2=mulDivExpr {if ($op.value) $value=Buffer.oper("+",$value,$b2.value); 
+                                else $value=Buffer.oper("-",$value,$b2.value);})* 
+  ;
+  
+mulDivExpr returns [ArrayList<Double> value]:
+  b1=bufferAtom {$value = $b1.value;} 
+    (op=mulDiv b2=bufferAtom {if ($op.value) $value=Buffer.oper("*",$value,$b2.value); 
+                             else $value=Buffer.oper("/",$value,$b2.value);})*
+  ;
+  
+bufferAtom returns [ArrayList<Double> value]:
+  gen=generador sec1=sec_metodos[$gen.value] {$value = $sec1.value;}
+  |
+  BR_START b=buffer BR_END sec2=sec_metodos[$b.value] {$value = $sec2.value;}  
+  ;
+  
+sumaResta returns [boolean value]:
+  ADD {$value = true;} 
+  |
+  SUB {$value = false;}
+  ;
+        
+mulDiv returns [boolean value]:
+  MUL {$value = true;} 
+  |
+  DIV {$value = false;} 
+  ;
+  
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Decisiones tomadas}
-\begin{itemize}
-\item Todas las funciones  pueden tomar 0, 1 o 2 parámetros, tomando valores por defecto en caso de que sean menos de 2 parámetros. En el caso de tener 0 parametros, no se escriben los paréntesis '()'.
+generador returns [ArrayList<Double> value]:
+  sin {$value = $sin.value;}
+  |
+	lin {$value = $lin.value;}
+	| 
+	sil {$value = Buffer.sil();} 
+	| 
+	noi {$value = $noi.value;}
+	|
+	a=num {$value = Buffer.buffer(getDouble($a.text));}
+	;
+	
+sin returns [ArrayList<Double> value]: 
+  SIN PR_START c=num (PR_END | ',' a=num PR_END) 
+        {if($a.text == null){ $value = Buffer.sin(getDouble($c.text),1); } 
+          else { $value = Buffer.sin(getDouble($c.text),getDouble($a.text)); }}
+  ;
+  
+  
+lin returns [ArrayList<Double> value]:
+  LIN PR_START a=num ',' b=num PR_END 
+    {$value = Buffer.lin(getDouble($a.text), getDouble($a.text));}
+  ;
+  
+sil returns [ArrayList<Double> value]: 
+  SIL {$value = Buffer.sil();}
+  ;
+  
+noi returns [ArrayList<Double> value]:
+  NOI PR_START a=num PR_END {$value = Buffer.noi(getDouble($a.text));}
+  ;
+   
+  
+/* Instanciamos un metodo que puede recibir parametros */	
+sec_metodos[ArrayList<Double> buffInicial] returns [ArrayList<Double> value]:	
+	'.' m=metodo[buffInicial] s=sec_metodos[m.value] {$value = $s.value;}
+	| {$value = $buffInicial;}
+	;
 
-\item El whitespace de los programas es eliminado y no considerado, con excepción del caso de las //, que eliminan lo siguiente de esa línea.
+/* Los metodos que reciben parametros, algunos obligatorios */
+metodo[ArrayList<Double> buff] returns [ArrayList<Double> value]:	
+  'expand' param{$value = Buffer.expand($buff, $param.value);}
+  | 
+  'reduce' param{$value = Buffer.reduce($buff, $param.value);}
+  | 
+  'post' {$value = Buffer.post($buff);}
+  | 
+  'play' (p=param {$value = Buffer.play($buff,$p.value);}| {$value = Buffer.play($buff,1.0);})
+  | 
+  'loop' a=param {$value = Buffer.loop($buff, $a.value);}
+  | 
+  'fill' a=param {$value = Buffer.fill($buff, $a.value);}
+  | 
+  'tune' a=param {$value = Buffer.tune($buff, $a.value);}
+  ;
 
-\item La gramática definida es LL(1) dado que para dos producciones con misma parte izquierda, son disjuntos los simbolos directrices generados.
-\end{itemize}
+/* Los parametros pueden ser numeros, o sino, sin parentesis*/
+param returns [Double value]:	PR_START n=num PR_END {$value = getDouble($n.text);}
+	;
 
-\section{Lexer}
-
-\subsection{Presunciones del funcionamiento del Lexer }
-\begin{itemize}
-\item Nos reemplaza los números por el token numeros usando la expresión regular definida en la regla 'num'.
-\item Nos reemplaza las funciones por sus tokens correspondientes.
-\item Nos elimina todo caracteres que sigue el $//$ hasta el \textbackslash$n$, incluyendo las $//$
-\end{itemize}
-
-\subsection{Configuración del Lexer }
-\begin{itemize}
-
-\item Los números los definimos con expresiones regulares:
-\begin{center}
-num $\equiv$ (+ $|$ - $|$ ) [[1..9][0..9]* $|$ 0 ][.[0..9]*[1..9] $|$ .0 $|$ ]
-\end{center}
-
-\item Las funciones definidas con expresiones regulares:
-\begin{center}
-sin $\equiv$ sin \\ 						
-lin $\equiv$ [lin $|$ linear] \\
-sil $\equiv$ [sil $|$ silence] \\
-noi $\equiv$ [noi $|$ noise] \\
-\end{center}
-
-\item Los operandos definidos con expresiones regulares:
-\begin{center}
-mix $\equiv$ \& $|$ mix \\
-con $\equiv$ ; $|$ con \\
-add $\equiv$ + $|$ add \\
-sub $\equiv$ - $|$ sub \\
-mul $\equiv$ * $|$ mul \\
-div $\equiv$ / $|$ div
-\end{center}
-
-\item Reducción del whitespace y eliminación de los comentarios:
-
-\begin{center}
-E $\equiv$ [//\textbackslash$w$*\textbackslash$n$ $|$ \textbackslash$s$ $|$ \textbackslash$n$ ]*  
-\end{center}
-
-\end{itemize}
-
-
-
-\section{Definici\'on de la gram\'atica}
-
-\subsection{Símbolos no terminales}
-\begin{itemize}
-\item \textbf{$V_n$} = \{S R op G F H I N M P funcion\}.
-\end{itemize}
-
-
-\subsection{Símbolos terminales}
-\begin{itemize}
-\item \textbf{$V_t$} = \{, \{ \} ( ) num expand reduce post loop fill tune play sin lin sil noi mix con add sub mul div\}.
-\end{itemize}
-
-\subsection{Símbolo distinguido}
-\begin{itemize}
-\item \textbf{$S$} = S 
-\end{itemize}
-
-\subsection{Producciones}
-\begin{enumerate}
-\item Del símbolo inicial a una lista de lista generadores con aplicaciones o generadores con aplicaciones unidos por operandos.:
-
-\begin{itemize}
-\item \textbf{S} $\Rightarrow$ \{S\}N $|$ GNR 
-\item \textbf{R} $\Rightarrow$ $\lambda$ $|$ op B 
-\end{itemize}
-
-\item Las operaciones pueden ser invocadas con los símbolos o con los nombres completos:
-\begin{itemize}
-\item \textbf{op} $\Rightarrow$ mix $|$ con $|$ add $|$ sub $|$ mul $|$ div 
-\end{itemize}
+/* Los numeros aceptados por la gramatica */
+num returns  [String text]:
+	(ADD{$text = $ADD.text;} 
+    | SUB {$text = $SUB.text;} 
+    | {$text = "";}) i1=INT {$text = $text + $i1.text;} 
+        (PERIOD i2=INT {$text = $text + $PERIOD.text + $i2.text;})?
+	;
 
 
-\item Los generadores pueden ser o numeros u objetos devueltos por funciones:
-\begin{itemize}
-\item \textbf{G} $\Rightarrow$ num $|$ funcion 
-\end{itemize}
 
-\item Las funciones según definidas en la página 2 del enunciado devuelven objetos:
-\begin{itemize}
-\item \textbf{funcion} $\Rightarrow$  FH 
-\item \textbf{F} $\Rightarrow$ sin $|$ lin $|$ sil $|$ noi 
-\item \textbf{H} $\Rightarrow$ $\lambda$ $|$ ( num I 
-\item \textbf{I} $\Rightarrow$ ,num) $|$ ) 
-\end{itemize}	
 
-\item Los métodos de alteración pueden tener parámetros o no, y pueden ser encadenados:
+\end{lstlisting}
+\newpage
+\subsection{Buffer.java}
+\begin{lstlisting}[language=Java]
+import java.util.ArrayList;
+import java.lang.Math;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.SourceDataLine;
 
-\begin{itemize}
-\item \textbf{N} $\Rightarrow$ $\lambda$ $|$ .MN 
-\item \textbf{M} $\Rightarrow$ expand $|$ reduce $|$ post $|$ play P $|$ loop( num ) $|$ fill( num ) $|$ tune( num ) 
-\item \textbf{P} $\Rightarrow$ $\lambda$ $|$ ( num ) 
-\end{itemize}
 
-\end{enumerate}
+public class Buffer {
+    public static int sampling_rate = 44100;
+    public static int beat = sampling_rate / 12;
+
+    public static ArrayList<Double> resize
+            (ArrayList<Double> a, double number) {
+        ArrayList<Double> buff = new ArrayList<Double>();
+        for (int i = 0; i < number; i++) {
+            buff.add(a.get(i % a.size()));
+        }
+        return buff;
+    }
+
+    public static ArrayList<Double> buffer(double number) {
+        ArrayList<Double> buff = new ArrayList<Double>();
+        for (int i = 0; i < beat; i++) {
+            buff.add(number);
+        }
+        return buff;
+    }
+
+    public static ArrayList<Double> sin (double c, double a) {
+        ArrayList<Double> buff = new ArrayList<Double>();
+        double x = (c * 2 * Math.PI)/beat;
+
+        for (int i = 0; i < beat; i++) {
+            buff.add(a * Math.sin(i * x));
+        }
+        return buff;
+    }
+
+    public static ArrayList<Double> sil() {
+        ArrayList<Double> buff = new ArrayList<Double>();
+        double cero = 0;
+        for (int i = 0; i < beat; i++) {
+            buff.add(cero);
+        }
+        return buff;
+    }
+
+    public static ArrayList<Double> lin (double a, double b) {
+        ArrayList<Double> buff = new ArrayList<Double>();
+        double diff = (b - a)/(beat - 1);
+        for (int i = 0; i < beat; i++) {
+            buff.add(a + diff * i);
+        }
+        return buff;
+    }
+
+    public static ArrayList<Double> noi (double a) {
+        ArrayList<Double> buff = new ArrayList<Double>();
+        for (int i = 0; i < beat*a; i++) {
+            buff.add(Math.random()*2 - 1);
+        }
+        return buff;
+    }
+
+    public static void music_play
+            (ArrayList<Double> notes, Double speed) {
+        byte[] buf = new byte[1];
+        double sampling_freq =sampling_rate;
+
+        try {
+            AudioFormat af = 
+                new AudioFormat((float) sampling_freq, 8, 1, true, false);
+            SourceDataLine sdl = AudioSystem.getSourceDataLine(af);
+            sdl = AudioSystem.getSourceDataLine(af);
+            sdl.open(af);
+            sdl.start();
+            System.out.println("Buffer to Play size size: " + notes.size());
+            System.out.println("Sound duration: " + 
+                (1/12.0)* (((double)notes.size())/beat)/speed+ "s. ");
+            assert(speed>0.0);
+            double true_notes_length = notes.size()/speed;
+
+            for(int j = 0 ; j < true_notes_length; j++) {
+                Double note;
+                int index_base = (int) ((double)j*speed);
+                int index_top = (int) (((double)(j+1))*speed);
+                if(index_base>=notes.size()) index_base=notes.size()-1;
+                if(index_top>=notes.size()) index_top=notes.size()-1;
+                Double note_left = notes.get(index_base)*100.0;
+                Double note_right = notes.get(index_top)*100.0;
+                Double coef = (index_base-index_top)/(note_left-note_right) ;
+                note = coef * note_left + (1.0-coef) * note_right;
+                buf[0]= note.byteValue();
+                sdl.write(buf, 0, 1);
+
+            }
+            sdl.drain();
+            sdl.stop();
+            sdl.close();
+        } catch (Exception ex) {
+            System.out.println
+                ("Error en la reproduccion: " + ex.getCause() + 
+                " \n Detalles: "  + ex.getMessage());
+        }
+    }
+
+    public static ArrayList<Double> resample(
+            ArrayList<Double> buff, int L) {
+        ArrayList<Double> r = new ArrayList<Double>();
+        int size = buff.size();
+        for (int i = 0; i < L; i++) {
+            r.add(buff.get(i * size / L));
+        }
+        return r;
+    }
+
+    public static ArrayList<Double> tune
+            (ArrayList<Double> buff, int P) {
+        int size = buff.size();
+        return resample(buff,Utils.doubleToInt(size * Math.pow(2.0, -P/12.0)));
+    }
+
+    public static ArrayList<Double> resize
+            (ArrayList<Double> buff, int L) {
+        ArrayList<Double> r = new ArrayList<Double>();
+        int size = buff.size();
+        for (int i = 0; i < L; i++) {
+            r.add(buff.get(i % size));
+        }
+        return r;
+    }
+
+    public static ArrayList<Double> reduce
+            (ArrayList<Double> buff, int N) {
+        int L = beat * N;
+        if(buff.size() > L) {
+            return resample(buff, L);
+        } else {
+            return buff;
+        }
+    }
+
+    public static ArrayList<Double> expand(ArrayList<Double> buff, int N) {
+        int L = beat * N;
+        if(buff.size() < L) {
+            return resample(buff, L);
+        } else {
+            return buff;
+        }
+    }
+
+    public static ArrayList<Double> fill(ArrayList<Double> buff, int N) {
+        ArrayList<Double> r = new ArrayList<Double>();
+        int L = beat * N;
+        int size = buff.size();
+        for (int i = 0; i < L; i++) {
+            if(i < size) {
+                r.add(buff.get(i));
+            } else {
+                r.add(0.0);
+            }
+        }
+
+        return r;
+    }
+
+    public static ArrayList<Double> oper
+            (String op, ArrayList<Double> buffA, ArrayList<Double> buffB) {
+        ArrayList<Double> a = buffA.size() < buffB.size() ? 
+                                resize(buffA, buffB.size()) : 
+                                buffA;
+        ArrayList<Double> b = buffB.size() < buffA.size() ? 
+                                resize(buffB, buffA.size()) : 
+                                buffB;
+
+        if (op.equals("+")) return sum(a,b);
+        if (op.equals("-")) return sub(a,b);
+        if (op.equals("*")) return mul(a,b);
+        if (op.equals("/")) return div(a,b);
+        if (op.equals("m")) return mix(a,b);
+        return null;
+    }
+
+    public static ArrayList<Double> sum
+            (ArrayList<Double> a, ArrayList<Double> b) {
+        ArrayList<Double> r = new ArrayList<Double>();
+        for (int i = 0; i < a.size(); i++) r.add(a.get(i) + b.get(i));
+        return r;
+    }
+
+    public static ArrayList<Double> sub
+            (ArrayList<Double> a, ArrayList<Double> b) {
+        ArrayList<Double> r = new ArrayList<Double>();
+        for (int i = 0; i < a.size(); i++) r.add(a.get(i) - b.get(i));
+        return r;
+    }
+
+    public static ArrayList<Double> mul
+            (ArrayList<Double> a, ArrayList<Double> b) {
+        ArrayList<Double> r = new ArrayList<Double>();
+        for (int i = 0; i < a.size(); i++) r.add(a.get(i) * b.get(i));
+        return r;
+    }
+
+    public static ArrayList<Double> div
+            (ArrayList<Double> a, ArrayList<Double> b) {
+        ArrayList<Double> r = new ArrayList<Double>();
+        for (int i = 0; i < a.size(); i++) r.add(a.get(i) / b.get(i));
+        return r;
+    }
+
+    public static ArrayList<Double> mix
+            (ArrayList<Double> a, ArrayList<Double> b) {
+        ArrayList<Double> r = new ArrayList<Double>();
+        for (int i = 0; i < a.size(); i++) r.add((a.get(i) + b.get(i))/2);
+        return r;
+    }
+
+    public static ArrayList<Double> expand
+            (ArrayList<Double> buff, Double n) {
+        Double total = beat*n;
+        if (buff.size() < total) {
+            return resize(buff, total);
+        } else {
+            return buff;
+        }
+    }
+
+    public static ArrayList<Double> reduce
+            (ArrayList<Double> buff, Double n) {
+        Double total = beat*n;
+        if (buff.size() > total) {
+            return resize(buff, total);
+        } else {
+            return buff;
+        }
+    }
+
+    public static ArrayList<Double> post
+            (ArrayList<Double> buff) {
+        for(int i = 0; i<buff.size(); i += beat) {
+            System.out.print(buff.get(i + beat/2) + " ");
+        }
+        System.out.println("");
+        return buff;
+    }
+
+    public static ArrayList<Double> play
+            (ArrayList<Double> buff, Double speed) {
+        music_play(buff, speed);
+        return buff;
+    }
+
+    public static ArrayList<Double> loop 
+            (ArrayList<Double> buff, double times) {
+        ArrayList<Double> localbuff = new ArrayList<Double>();
+        int fulltimes=(int)times;
+        for(int i = 0; i< fulltimes; i++)
+            localbuff.addAll(buff);
+        int partial = (int) ((times - fulltimes)*(double)buff.size());
+        for(int i = 0; i< partial; i++)
+            localbuff.add(buff.get(i));
+
+        return localbuff;
+    }
+
+    public static ArrayList<Double> fill
+            (ArrayList<Double> buff, Double size) {
+        ArrayList<Double> localBuff = new ArrayList<Double>();
+
+        Double total = size * beat;
+        Double zeros = total > buff.size() ? total - buff.size() : 0 ;
+
+        for(int i = 0; i < buff.size(); i++) localBuff.add(buff.get(i));
+
+        for(int i = 0; i < zeros; i++) localBuff.add(0.0);
+
+        return buff;
+    }
+
+    public static ArrayList<Double> tune
+            (ArrayList<Double> buff, Double pitch) {
+        return resample(buff, 
+                    (int)(buff.size()*(Math.pow(Math.pow(2, 1/12.0),-pitch))));
+    }
+
+}
+
+
+
+\end{lstlisting}
+
 \end{document}
