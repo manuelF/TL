@@ -63,7 +63,7 @@ public class Buffer {
     public static void music_play(ArrayList<Double> notes, Double speed) {
         byte[] buf = new byte[1];
         double sampling_freq =sampling_rate;
-        int duration = beat;
+        int duration =(int) beat;
         System.out.println("TODO implementar velocidad, speed is: " + speed);
 
         try {
@@ -74,15 +74,14 @@ public class Buffer {
             sdl.start();
             System.out.println("Buffer to Play size size: " + notes.size());
             System.out.println("Sound duration: " + (1/12.0)* ((double)notes.size())/duration+ "s. ");
-
-            for(int j = 0 ; j < notes.size(); j+=duration){
-
-                for (int i = 0; i < duration; i++) {
-                    Double note = notes.get(j+i);
-                    double angle = i / ( note) * 2.0 * Math.PI;
-                    buf[0] = (byte) (Math.sin(angle) * 100);
+            assert(speed>0.0);
+            double ratio = notes.size()/speed;
+            for(int j = 0 ; j < notes.size(); j++){
+//                    int subsampled_index =floor(j * ratio);
+                    Double note = notes.get(j)*100.0;
+                    buf[0]=(byte) (note.byteValue());
                     sdl.write(buf, 0, 1);
-                }
+                
             }
             sdl.drain();
             sdl.stop();
