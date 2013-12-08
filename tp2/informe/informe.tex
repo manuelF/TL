@@ -52,14 +52,18 @@ y reproducirlo. El problema esta compuesto principalmente de dos secciones:
 \end{enumerate}
 
 \section{Correcciones al TP 1}
-Del trabajo pr\'actico anterior al actual se cambi\'o casi en su totalidad la parte de la gram\'atica correspondiente al parser y a su vez se cambi\'o la expresi\'on que denotaba a los n\'umeros de punto flotante. Se establecieron las precedencias requeridas por el enunciado en lo relacionado a operaciones aplciadas a los buffers, operaciones aritm\'eticas y generaci\'on de buffers.
-\section{Implementaci\'on}
+Del trabajo pr\'actico anterior al actual se cambi\'o casi en su totalidad la 
+parte de la gram\'atica correspondiente al parser y a su vez se cambi\'o la 
+expresi\'on que denotaba a los n\'umeros de punto flotante. Se establecieron 
+las precedencias requeridas por el enunciado en lo relacionado a operaciones 
+aplciadas a los buffers, operaciones aritm\'eticas y generaci\'on de buffers.
 
+\section{Implementaci\'on}
 Como habiamos definido para el TP1 una soluci\'on ELL(1), decidimos proceder con
 ella para la realizacion de este TP2. Por lo tanto, la mejor herramienta con la
 que contamos era ANTLR. 
 
-La estructura que definimos cuenta con tres elementos principales
+La estructura que definimos cuenta con tres elementos principales:
 \begin{itemize}
     \item \textbf{collider.g}: La gramatica ELL(1) parseable por ANTLR,
         donde se encuentran definidas las producciones y la sem\'antica
@@ -68,7 +72,7 @@ La estructura que definimos cuenta con tres elementos principales
         gram\'atica invocan a los m\'etodos estaticos definidos en esta
         clase. Ac\'a se encuentran las operaciones que operan sobre el 
         buffer, los generadores y la reproducci\'on de los sonidos.
-    \item \textbf{Main.java}: ANTLR genera, dada una gram\'atica, un
+    \item \textbf{Main.java/Prompt.java}: ANTLR genera, dada una gram\'atica, un
         par de clases que representan el Lexer y el Parser. Para
         poder reconocer una cadena, hay que instanciar estas clases
         con los strings de input. Ac\'a se las instancia para que se 
@@ -450,9 +454,8 @@ public class Buffer {
             sdl = AudioSystem.getSourceDataLine(af);
             sdl.open(af);
             sdl.start();
-            System.out.println("Buffer to Play size size: " + notes.size());
-            System.out.println("Sound duration: " + 
-                (1/12.0)* (((double)notes.size())/beat)/speed+ "s. ");
+            System.out.format("Sound duration: %.3f s%n", 
+                    (1/12.0)* (((double)notes.size())/beat)/speed);
             assert(speed>0.0);
             double true_notes_length = notes.size()/speed;
 
