@@ -10,7 +10,11 @@ public class Main {
     public static void main(String[] args) throws Exception {   	
         
         String input;
-        input="{lin(-100,30) * sin(440) ; sil ; noi(2) ; sil}.post.play(0.1)";
+        //Cancion 1
+        input="{{{sil.loop(3);sin(10.9).loop(3);sin(13.73).loop(3);sin(14.55).loop(3);sin(16.33).loop(12)}.loop(2)};{sil.loop(3);sin(10.9).loop(3);sin(13.73).loop(3); sin(14.55).loop(3); sin(16.33).loop(6); sin(13.73).loop(6); sin(10.9).loop(6); sin(13.73).loop(6);sin(12.23).loop(18)};{sin(13.73).loop(3);sin(12.23).loop(3);sin(10.9).loop(6);sin(10.9).loop(3);sin(13.73).loop(6); sin(16.33).loop(6); sin(16.33).loop(3);sin(14.55).loop(6)};{sil.loop(6); sin(13.73).loop(3);sin(14.55).loop(3); sin(16.33).loop(6);sin(13.73).loop(6);sin(12.23).loop(6);sin(12.23).loop(6);sin(10.9).loop(15);sil.loop(9)}}.play";
+        //Cancion 2
+//        input="{{sin(12.23).loop(1.5);sin(12.23).loop(1.5);sin(12.23).loop(1.5);sin(16.33).loop(6);sin(24.47).loop(6);{sin(21.80).loop(1.5);sin(20.57).loop(1.5);sin(18.33).loop(1.5);sin(32.66).loop(6);sin(24.47).loop(3)}.loop(2)};{sin(21.80).loop(1.5);sin(20.57).loop(1.5);sin(21.80).loop(1.5);sin(18.33).loop(6);sin(12.23).loop(3);sin(12.23).loop(1.5);sin(16.33).loop(6);sin(24.47).loop(6);{sin(21.80).loop(1.5);sin(20.57).loop(1.5);sin(18.33).loop(1.5);sin(32.66).loop(6);sin(24.47).loop(3)}.loop(2)};{sin(21.80).loop(1.5);sin(20.57).loop(1.5);sin(21.80).loop(1.5);sin(18.33).loop(6)}}.play";
+        //input="{lin(-100,30) * sin(440) ; sil ; noi(2) ; sil}.post.play(0.1)";
         //input="{ 1; -1 }.loop(3).play"; //onda cuadrada
 		//input="{{ sin(8); sin(4); sin(2); sin(1) } * lin( 1.0, 0.0) }.expand(12).play"; //drums
 		//input="{ { sin( 16, 0.9)+noise(0.1) }*lin( 1.0, 0.1) }.expand(12).play "; //Snare
@@ -24,8 +28,6 @@ public class Main {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         colliderParser parser = new colliderParser(tokens);
     	ArrayList<Double> toPlay = parser.sGram().value;
-        print(toPlay.size()); // print the value
-        //Buffer.music_play(toPlay,1.0);
     }
 
 }
