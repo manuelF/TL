@@ -161,10 +161,17 @@ pero creemos que se entiende lo suficiente y nos deja como ventaja el hecho
 de que la gram\'atica quedara autocontenida y no desperdigada en la estructura
 de varios archivos java distintos.
 
-Otra decision que tomamos fue que los numeros pueden ser unicamente de la forma
+
+Otra decisi\'on que tomamos fue que los numeros pueden ser unicamente de la forma
 [0-9]+'.'[0-9]+ o [0-9]. No consideramos  la posiblidad de [0-9]'.' ya que es
 normalmente mal vista en varios lenguajes de programaci\'on, porque visibilemente
-oculta la existencia de que es un punto flotante y no un entero.
+oculta la existencia de que es un punto flotante y no un entero. Esta decisi\'on en 
+particular fue tomada, debido a que el parser no puede diferenciar un n\'umero de 
+punto flotante de un n\'umero sin punto, seguido de una aplicaci\'on de un m\'etodo. 
+Por lo que se tuvo que delegar el trabajo al parser, haciendo esto mas engorroso 
+diferenciar los distintos casos borde de un n\'umero de punto flotante flotante: 
+ceros innecesarios adelante y detraz, adem\'as de la aparici\'on del punto sin 
+valores en uno de los lados.
 
 
 \section{Conclusiones}
